@@ -1,0 +1,49 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BetterHexViewer.WinUI3"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml">
+
+    <Style TargetType="local:BetterHexViewer">
+        <Setter Property="FontFamily" Value="Courier New"/>
+        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment"   Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:BetterHexViewer">
+                    <!--
+                        Win2D CanvasControl + tooltip overlay in a Grid.
+                        The Canvas layer (IsHitTestVisible=False) hosts the
+                        PART_TooltipBorder so it floats above everything
+                        without interfering with pointer events.
+                    -->
+                    <Grid>
+                        <canvas:CanvasControl x:Name="PART_Canvas"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              ClearColor="Transparent"/>
+
+                        <Canvas IsHitTestVisible="False">
+                            <Border x:Name="PART_TooltipBorder"
+                                    Background="#E0202020"
+                                    BorderBrush="#80808080"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Padding="7,4"
+                                    Visibility="Collapsed"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="PART_TooltipText"
+                                           Foreground="White"
+                                           FontFamily="Segoe UI"
+                                           FontSize="11"
+                                           TextWrapping="NoWrap"/>
+                            </Border>
+                        </Canvas>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

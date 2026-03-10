@@ -1,0 +1,330 @@
+<Window
+    x:Class="BetterHexViewer.Demo.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hex="using:BetterHexViewer.WinUI3"
+    Title="BetterHexViewer WinUI 3 – Demo">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══════ Hex viewer + status bar ═══════ -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <hex:BetterHexViewer
+                x:Name="HexViewer"
+                Grid.Row="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                SelectionChanged="HexViewer_SelectionChanged"/>
+
+            <!-- Status bar -->
+            <Grid Grid.Row="1"
+                  Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+                  Padding="12,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="TxtFileName"
+                           Grid.Column="0"
+                           Text="No file loaded."
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock x:Name="TxtFileSize"
+                           Grid.Column="1"
+                           Margin="16,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                <TextBlock x:Name="TxtSelection"
+                           Grid.Column="2"
+                           Margin="16,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                <TextBlock x:Name="TxtBytesPerLine"
+                           Grid.Column="3"
+                           Margin="8,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+            </Grid>
+        </Grid>
+
+        <!-- ═══════ Right-side toolbar ═══════ -->
+        <Border Grid.Column="1"
+                Width="230"
+                Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1,0,0,0">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Padding="0,0,0,12">
+                <StackPanel Spacing="0">
+
+                    <!-- ── File ── -->
+                    <TextBlock Text="FILE"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,12,12,4"/>
+                    <Button x:Name="BtnOpenFile"
+                            Content="📂  Open file…"
+                            HorizontalAlignment="Stretch"
+                            Margin="8,0"
+                            Click="BtnOpenFile_Click"
+                            ToolTipService.ToolTip="Open any file"/>
+
+                    <!-- ── Font ── -->
+                    <TextBlock Text="FONT"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,16,12,4"/>
+
+                    <!-- Font family combobox (monospaced fonts) -->
+                    <TextBlock Text="Family" Margin="12,0,12,2" FontSize="11"/>
+                    <ComboBox x:Name="CmbFont"
+                              HorizontalAlignment="Stretch"
+                              Margin="8,0"
+                              SelectionChanged="CmbFont_SelectionChanged"
+                              ToolTipService.ToolTip="Monospaced font family"/>
+
+                    <!-- Font size -->
+                    <Grid Margin="8,6,8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Size" Grid.Column="0" VerticalAlignment="Center" FontSize="11" Margin="4,0,0,0"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                            <Button x:Name="BtnFontMinus" Content="−" Width="32" Height="28"
+                                    Click="BtnFontMinus_Click" ToolTipService.ToolTip="Decrease font size"/>
+                            <TextBlock x:Name="TxtFontSize" Text="13" Width="26"
+                                       VerticalAlignment="Center" TextAlignment="Center"/>
+                            <Button x:Name="BtnFontPlus"  Content="+" Width="32" Height="28"
+                                    Click="BtnFontPlus_Click"  ToolTipService.ToolTip="Increase font size"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Bold toggle -->
+                    <ToggleButton x:Name="TglBold"
+                                  Content="𝐁  Bold"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="8,6,8,0"
+                                  IsChecked="False"
+                                  Checked="TglBold_Changed"
+                                  Unchecked="TglBold_Changed"
+                                  ToolTipService.ToolTip="Toggle bold font weight"/>
+
+                    <!-- ── Layout ── -->
+                    <TextBlock Text="LAYOUT"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,16,12,4"/>
+
+                    <!-- Offset format -->
+                    <TextBlock Text="Offset format" Margin="12,0,12,2" FontSize="11"/>
+                    <ComboBox x:Name="CmbOffset"
+                              HorizontalAlignment="Stretch"
+                              Margin="8,0"
+                              SelectionChanged="CmbOffset_SelectionChanged"
+                              ToolTipService.ToolTip="Offset column format">
+                        <ComboBoxItem Content="Hexadecimal" IsSelected="True"/>
+                        <ComboBoxItem Content="Decimal"/>
+                        <ComboBoxItem Content="Octal"/>
+                    </ComboBox>
+
+                    <!-- Column grouping -->
+                    <TextBlock Text="Column grouping" Margin="12,6,12,2" FontSize="11"/>
+                    <ComboBox x:Name="CmbGroup"
+                              HorizontalAlignment="Stretch"
+                              Margin="8,0"
+                              SelectionChanged="CmbGroup_SelectionChanged"
+                              ToolTipService.ToolTip="Hex column grouping">
+                        <ComboBoxItem Content="1 byte"   IsSelected="True"/>
+                        <ComboBoxItem Content="2 bytes"/>
+                        <ComboBoxItem Content="4 bytes"/>
+                        <ComboBoxItem Content="8 bytes"/>
+                        <ComboBoxItem Content="16 bytes"/>
+                    </ComboBox>
+
+                    <!-- ASCII encoding -->
+                    <TextBlock Text="ASCII encoding" Margin="12,6,12,2" FontSize="11"/>
+                    <ComboBox x:Name="CmbEncoding"
+                              HorizontalAlignment="Stretch"
+                              Margin="8,0"
+                              SelectionChanged="CmbEncoding_SelectionChanged"
+                              ToolTipService.ToolTip="Encoding used to display the ASCII panel"/>
+
+                    <!-- Byte spacing -->
+                    <Grid Margin="12,6,12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Byte spacing" Grid.Column="0" VerticalAlignment="Center" FontSize="11"/>
+                        <TextBlock x:Name="TxtSpacingVal" Text="10" Grid.Column="1"
+                                   Width="22" TextAlignment="Right" VerticalAlignment="Center" FontSize="11"/>
+                    </Grid>
+                    <Slider x:Name="SldrSpacing"
+                            Margin="8,0"
+                            Minimum="2" Maximum="24" Value="10"
+                            StepFrequency="1" SnapsTo="StepValues"
+                            ValueChanged="SldrSpacing_ValueChanged"
+                            ToolTipService.ToolTip="Horizontal byte spacing (px)"/>
+
+                    <!-- Row gap -->
+                    <Grid Margin="12,0,12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Row gap" Grid.Column="0" VerticalAlignment="Center" FontSize="11"/>
+                        <TextBlock x:Name="TxtLineGapVal" Text="4" Grid.Column="1"
+                                   Width="22" TextAlignment="Right" VerticalAlignment="Center" FontSize="11"/>
+                    </Grid>
+                    <Slider x:Name="SldrLineGap"
+                            Margin="8,0"
+                            Minimum="0" Maximum="12" Value="4"
+                            StepFrequency="1" SnapsTo="StepValues"
+                            ValueChanged="SldrLineGap_ValueChanged"
+                            ToolTipService.ToolTip="Extra vertical gap between rows (0–12 px)"/>
+
+                    <!-- Toggles -->
+                    <ToggleButton x:Name="TglFullWidth"
+                                  Content="⇔  Full width"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="8,4,8,0"
+                                  IsChecked="False"
+                                  Checked="TglFullWidth_Changed"
+                                  Unchecked="TglFullWidth_Changed"
+                                  ToolTipService.ToolTip="Auto-fit columns to window width"/>
+
+                    <ToggleButton x:Name="TglAscii"
+                                  Content="A  ASCII panel"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="8,4,8,0"
+                                  IsChecked="True"
+                                  Checked="TglAscii_Changed"
+                                  Unchecked="TglAscii_Changed"
+                                  ToolTipService.ToolTip="Show / hide ASCII column"/>
+
+                    <!-- ── Colours ── -->
+                    <TextBlock Text="COLOURS"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,16,12,4"/>
+
+                    <!-- Theme preset -->
+                    <TextBlock Text="Theme preset" Margin="12,0,12,2" FontSize="11"/>
+                    <ComboBox x:Name="CmbTheme"
+                              HorizontalAlignment="Stretch"
+                              Margin="8,0"
+                              SelectionChanged="CmbTheme_SelectionChanged"
+                              ToolTipService.ToolTip="Colour theme preset">
+                        <ComboBoxItem Content="☀  Light"   IsSelected="True"/>
+                        <ComboBoxItem Content="🌙  Dark"/>
+                        <ComboBoxItem Content="🔬  Matrix"/>
+                    </ComboBox>
+
+                    <!-- Individual colour pickers (two-column grid) -->
+                    <Grid Margin="8,8,8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Background -->
+                        <TextBlock Text="Background" Grid.Row="0" Grid.Column="0"
+                                   FontSize="10" Margin="2,4,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorBg" Grid.Row="0" Grid.Column="1"
+                                Height="26" Margin="2,4,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorBg_Click"
+                                ToolTipService.ToolTip="Background colour">
+                            <Border x:Name="SwatchBg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FFFAF9F8"/>
+                        </Button>
+
+                        <!-- Foreground -->
+                        <TextBlock Text="Foreground" Grid.Row="1" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorFg" Grid.Row="1" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorFg_Click"
+                                ToolTipService.ToolTip="Text colour">
+                            <Border x:Name="SwatchFg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FF1B1B1B"/>
+                        </Button>
+
+                        <!-- Offset colour -->
+                        <TextBlock Text="Offset" Grid.Row="2" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorOffset" Grid.Row="2" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorOffset_Click"
+                                ToolTipService.ToolTip="Offset column colour">
+                            <Border x:Name="SwatchOffset" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FF00008B"/>
+                        </Button>
+
+                        <!-- Divider -->
+                        <TextBlock Text="Divider" Grid.Row="3" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorDivider" Grid.Row="3" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorDivider_Click"
+                                ToolTipService.ToolTip="Divider line colour">
+                            <Border x:Name="SwatchDivider" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FF808080"/>
+                        </Button>
+
+                        <!-- Selection bg -->
+                        <TextBlock Text="Sel. bg" Grid.Row="4" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorSelBg" Grid.Row="4" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorSelBg_Click"
+                                ToolTipService.ToolTip="Selection background colour">
+                            <Border x:Name="SwatchSelBg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FF0078D7"/>
+                        </Button>
+
+                        <!-- Selection fg -->
+                        <TextBlock Text="Sel. text" Grid.Row="5" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorSelFg" Grid.Row="5" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorSelFg_Click"
+                                ToolTipService.ToolTip="Selection text colour">
+                            <Border x:Name="SwatchSelFg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FFFFFFFF" BorderBrush="#20000000" BorderThickness="1"/>
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
