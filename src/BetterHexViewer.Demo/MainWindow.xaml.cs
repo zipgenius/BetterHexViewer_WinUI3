@@ -103,7 +103,7 @@ namespace BetterHexViewer.Demo
                 }
                 catch { /* not available on this system */ }
             }
-            CmbEncoding.ItemsSource   = available;
+            CmbEncoding.ItemsSource = available;
             CmbEncoding.SelectedIndex = 0;   // Latin-1 default
         }
 
@@ -128,7 +128,7 @@ namespace BetterHexViewer.Demo
                     using var fmt = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
                     {
                         FontFamily = name,
-                        FontSize   = 13
+                        FontSize = 13
                     };
                     // Create a tiny layout to force font resolution.
                     // If the font doesn't exist Win2D silently falls back;
@@ -147,7 +147,7 @@ namespace BetterHexViewer.Demo
 
             // Select the current font
             string current = HexViewer?.FontFamily?.Source ?? "Courier New";
-            string first   = current.Contains(',') ? current.Split(',')[0].Trim() : current;
+            string first = current.Contains(',') ? current.Split(',')[0].Trim() : current;
             int idx = available.IndexOf(first);
             CmbFont.SelectedIndex = idx >= 0 ? idx : available.IndexOf("Courier New");
         }
@@ -196,7 +196,53 @@ namespace BetterHexViewer.Demo
                 : FontWeights.Normal;
         }
 
-        // ─── File open ────────────────────────────────────────────────────
+        // ─── Show selection ───────────────────────────────────────────────
+
+        private async void BtnShowSelection_Click(object sender, RoutedEventArgs e)
+        {
+            var sel = HexViewer.Selection;
+
+            string message;
+            if (!sel.HasSelection)
+            {
+                message = "No bytes are currently selected.";
+            }
+            else
+            {
+                // Build hex preview (first 64 bytes max for display)
+                int previewLen = (int)Math.Min(sel.Length, 64);
+                var hexParts = new System.Text.StringBuilder();
+                for (int i = 0; i < previewLen; i++)
+                {
+                    if (i > 0 && i % 16 == 0) hexParts.Append('\n');
+                    else if (i > 0) hexParts.Append(' ');
+                    hexParts.Append(sel.Data[i].ToString("X2"));
+                }
+                if (sel.Length > 64)
+                    hexParts.Append($"\n… ({sel.Length - 64} more bytes)");
+
+                message =
+                    $"Start offset : 0x{sel.StartOffset:X8} ({sel.StartOffset})\n" +
+                    $"Length       : {sel.Length} byte{(sel.Length != 1 ? "s" : "")}\n" +
+                    $"Full Data[]  : {sel.Data.Length} bytes (no limit)\n\n" +
+                    $"Hex preview:\n{hexParts}";
+            }
+
+            var dialog = new ContentDialog
+            {
+                Title = "Selection — HexViewer.Selection",
+                Content = new TextBlock
+                {
+                    Text = message,
+                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Cascadia Mono, Consolas, Courier New"),
+                    FontSize = 12,
+                    TextWrapping = TextWrapping.Wrap
+                },
+                CloseButtonText = "OK",
+                XamlRoot = Content.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
 
         private async void BtnOpenFile_Click(object sender, RoutedEventArgs e)
         {
@@ -303,29 +349,29 @@ namespace BetterHexViewer.Demo
             switch (CmbTheme.SelectedIndex)
             {
                 case 1: // Dark
-                    SetColors(Color.FromArgb(255,30,30,30),
-                              Color.FromArgb(255,220,220,220),
-                              Color.FromArgb(255,100,180,255),
-                              Color.FromArgb(255,80,80,80),
-                              Color.FromArgb(255,0,100,200),
+                    SetColors(Color.FromArgb(255, 30, 30, 30),
+                              Color.FromArgb(255, 220, 220, 220),
+                              Color.FromArgb(255, 100, 180, 255),
+                              Color.FromArgb(255, 80, 80, 80),
+                              Color.FromArgb(255, 0, 100, 200),
                               Colors.White);
                     break;
 
                 case 2: // Matrix
                     SetColors(Colors.Black,
-                              Color.FromArgb(255,0,200,0),
-                              Color.FromArgb(255,0,255,0),
-                              Color.FromArgb(255,0,100,0),
-                              Color.FromArgb(255,0,140,0),
+                              Color.FromArgb(255, 0, 200, 0),
+                              Color.FromArgb(255, 0, 255, 0),
+                              Color.FromArgb(255, 0, 100, 0),
+                              Color.FromArgb(255, 0, 140, 0),
                               Colors.Black);
                     break;
 
                 default: // Light
-                    SetColors(Color.FromArgb(255,250,249,248),
-                              Color.FromArgb(255,27,27,27),
-                              Color.FromArgb(255,0,0,139),
+                    SetColors(Color.FromArgb(255, 250, 249, 248),
+                              Color.FromArgb(255, 27, 27, 27),
+                              Color.FromArgb(255, 0, 0, 139),
                               Colors.Gray,
-                              Color.FromArgb(255,0,120,215),
+                              Color.FromArgb(255, 0, 120, 215),
                               Colors.White);
                     break;
             }
@@ -334,10 +380,10 @@ namespace BetterHexViewer.Demo
         private void SetColors(Color bg, Color fg, Color offset, Color divider,
                                 Color selBg, Color selFg)
         {
-            HexViewer.Background        = new SolidColorBrush(bg);
-            HexViewer.Foreground        = new SolidColorBrush(fg);
-            HexViewer.OffsetForeground  = new SolidColorBrush(offset);
-            HexViewer.DividerBrush      = new SolidColorBrush(divider);
+            HexViewer.Background = new SolidColorBrush(bg);
+            HexViewer.Foreground = new SolidColorBrush(fg);
+            HexViewer.OffsetForeground = new SolidColorBrush(offset);
+            HexViewer.DividerBrush = new SolidColorBrush(divider);
             HexViewer.SelectionBackground = new SolidColorBrush(selBg);
             HexViewer.SelectionForeground = new SolidColorBrush(selFg);
 
@@ -348,12 +394,15 @@ namespace BetterHexViewer.Demo
                                     Color selBg, Color selFg)
         {
             if (SwatchBg == null) return;
-            SwatchBg.Background     = new SolidColorBrush(bg);
-            SwatchFg.Background     = new SolidColorBrush(fg);
+            SwatchBg.Background = new SolidColorBrush(bg);
+            SwatchFg.Background = new SolidColorBrush(fg);
             SwatchOffset.Background = new SolidColorBrush(offset);
-            SwatchDivider.Background= new SolidColorBrush(divider);
-            SwatchSelBg.Background  = new SolidColorBrush(selBg);
-            SwatchSelFg.Background  = new SolidColorBrush(selFg);
+            SwatchDivider.Background = new SolidColorBrush(divider);
+            SwatchSelBg.Background = new SolidColorBrush(selBg);
+            SwatchSelFg.Background = new SolidColorBrush(selFg);
+            // OffsetBg/AsciiBg are null (auto) after a theme reset — show neutral swatch
+            SwatchOffsetBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200));
+            SwatchAsciiBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200));
         }
 
         // ─── Individual colour pickers ────────────────────────────────────
@@ -388,6 +437,35 @@ namespace BetterHexViewer.Demo
             if (c.HasValue) { HexViewer.SelectionBackground = new SolidColorBrush(c.Value); SwatchSelBg.Background = HexViewer.SelectionBackground; }
         }
 
+        private async void BtnColorOffsetBg_Click(object sender, RoutedEventArgs e)
+        {
+            var current = HexViewer.OffsetBackground as SolidColorBrush
+                          ?? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
+            var c = await PickColorAsync(current.Color);
+            if (c.HasValue) { HexViewer.OffsetBackground = new SolidColorBrush(c.Value); SwatchOffsetBg.Background = HexViewer.OffsetBackground; }
+        }
+
+        private async void BtnColorAsciiBg_Click(object sender, RoutedEventArgs e)
+        {
+            var current = HexViewer.AsciiBackground as SolidColorBrush
+                          ?? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
+            var c = await PickColorAsync(current.Color);
+            if (c.HasValue) { HexViewer.AsciiBackground = new SolidColorBrush(c.Value); SwatchAsciiBg.Background = HexViewer.AsciiBackground; }
+        }
+
+        private void BtnResetColors_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset theme ComboBox to Light (index 0) which triggers SetColors
+            CmbTheme.SelectedIndex = 0;
+            // Also reset the new auto-derived properties
+            HexViewer.OffsetBackground = null;
+            HexViewer.AsciiBackground = null;
+            HexViewer.RulerForeground = null;
+            // Refresh swatches to reflect auto state
+            SwatchOffsetBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
+            SwatchAsciiBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
+        }
+
         private async void BtnColorSelFg_Click(object sender, RoutedEventArgs e)
         {
             var c = await PickColorAsync(((SolidColorBrush)HexViewer.SelectionForeground).Color);
@@ -402,20 +480,20 @@ namespace BetterHexViewer.Demo
         {
             var picker = new ColorPicker
             {
-                Color              = initial,
+                Color = initial,
                 ColorSpectrumShape = ColorSpectrumShape.Ring,
-                IsAlphaEnabled     = false,
-                IsHexInputVisible  = true,
-                Width              = 280
+                IsAlphaEnabled = false,
+                IsHexInputVisible = true,
+                Width = 280
             };
 
             var dialog = new ContentDialog
             {
-                Title             = "Pick a colour",
-                Content           = picker,
+                Title = "Pick a colour",
+                Content = picker,
                 PrimaryButtonText = "OK",
-                CloseButtonText   = "Cancel",
-                XamlRoot          = Content.XamlRoot
+                CloseButtonText = "Cancel",
+                XamlRoot = Content.XamlRoot
             };
 
             var result = await dialog.ShowAsync();
@@ -441,8 +519,8 @@ namespace BetterHexViewer.Demo
 
         private static string FormatSize(long bytes)
         {
-            if (bytes < 1024)            return $"{bytes} B";
-            if (bytes < 1024 * 1024)     return $"{bytes / 1024.0:F1} KB";
+            if (bytes < 1024) return $"{bytes} B";
+            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
             if (bytes < 1024 * 1024 * 1024L) return $"{bytes / (1024.0 * 1024):F1} MB";
             return $"{bytes / (1024.0 * 1024 * 1024):F2} GB";
         }

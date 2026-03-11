@@ -83,6 +83,13 @@
                             Click="BtnOpenFile_Click"
                             ToolTipService.ToolTip="Open any file"/>
 
+                    <Button x:Name="BtnShowSelection"
+                            Content="🔍  Show selection…"
+                            HorizontalAlignment="Stretch"
+                            Margin="8,4,8,0"
+                            Click="BtnShowSelection_Click"
+                            ToolTipService.ToolTip="Show current selection info via Selection property"/>
+
                     <!-- ── Font ── -->
                     <TextBlock Text="FONT"
                                Style="{StaticResource CaptionTextBlockStyle}"
@@ -248,6 +255,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <!-- Background -->
@@ -274,22 +283,46 @@
                                     Background="#FF1B1B1B"/>
                         </Button>
 
-                        <!-- Offset colour -->
-                        <TextBlock Text="Offset" Grid.Row="2" Grid.Column="0"
+                        <!-- Offset fg -->
+                        <TextBlock Text="Offset text" Grid.Row="2" Grid.Column="0"
                                    FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
                         <Button x:Name="BtnColorOffset" Grid.Row="2" Grid.Column="1"
                                 Height="26" Margin="2,2,2,1"
                                 HorizontalAlignment="Stretch"
                                 Click="BtnColorOffset_Click"
-                                ToolTipService.ToolTip="Offset column colour">
+                                ToolTipService.ToolTip="Offset column text colour">
                             <Border x:Name="SwatchOffset" Width="60" Height="14" CornerRadius="2"
                                     Background="#FF00008B"/>
                         </Button>
 
-                        <!-- Divider -->
-                        <TextBlock Text="Divider" Grid.Row="3" Grid.Column="0"
+                        <!-- Offset bg -->
+                        <TextBlock Text="Offset bg" Grid.Row="3" Grid.Column="0"
                                    FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
-                        <Button x:Name="BtnColorDivider" Grid.Row="3" Grid.Column="1"
+                        <Button x:Name="BtnColorOffsetBg" Grid.Row="3" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorOffsetBg_Click"
+                                ToolTipService.ToolTip="Offset column background colour">
+                            <Border x:Name="SwatchOffsetBg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FFE8E8E8"/>
+                        </Button>
+
+                        <!-- ASCII bg -->
+                        <TextBlock Text="ASCII bg" Grid.Row="4" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorAsciiBg" Grid.Row="4" Grid.Column="1"
+                                Height="26" Margin="2,2,2,1"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnColorAsciiBg_Click"
+                                ToolTipService.ToolTip="ASCII panel background colour">
+                            <Border x:Name="SwatchAsciiBg" Width="60" Height="14" CornerRadius="2"
+                                    Background="#FFE8E8E8"/>
+                        </Button>
+
+                        <!-- Divider -->
+                        <TextBlock Text="Divider" Grid.Row="5" Grid.Column="0"
+                                   FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnColorDivider" Grid.Row="5" Grid.Column="1"
                                 Height="26" Margin="2,2,2,1"
                                 HorizontalAlignment="Stretch"
                                 Click="BtnColorDivider_Click"
@@ -299,9 +332,9 @@
                         </Button>
 
                         <!-- Selection bg -->
-                        <TextBlock Text="Sel. bg" Grid.Row="4" Grid.Column="0"
+                        <TextBlock Text="Sel. bg" Grid.Row="6" Grid.Column="0"
                                    FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
-                        <Button x:Name="BtnColorSelBg" Grid.Row="4" Grid.Column="1"
+                        <Button x:Name="BtnColorSelBg" Grid.Row="6" Grid.Column="1"
                                 Height="26" Margin="2,2,2,1"
                                 HorizontalAlignment="Stretch"
                                 Click="BtnColorSelBg_Click"
@@ -311,9 +344,9 @@
                         </Button>
 
                         <!-- Selection fg -->
-                        <TextBlock Text="Sel. text" Grid.Row="5" Grid.Column="0"
+                        <TextBlock Text="Sel. text" Grid.Row="7" Grid.Column="0"
                                    FontSize="10" Margin="2,2,2,1" VerticalAlignment="Center"/>
-                        <Button x:Name="BtnColorSelFg" Grid.Row="5" Grid.Column="1"
+                        <Button x:Name="BtnColorSelFg" Grid.Row="7" Grid.Column="1"
                                 Height="26" Margin="2,2,2,1"
                                 HorizontalAlignment="Stretch"
                                 Click="BtnColorSelFg_Click"
@@ -322,6 +355,14 @@
                                     Background="#FFFFFFFF" BorderBrush="#20000000" BorderThickness="1"/>
                         </Button>
                     </Grid>
+
+                    <!-- Reset colours -->
+                    <Button x:Name="BtnResetColors"
+                            Content="↺  Reset colours"
+                            HorizontalAlignment="Stretch"
+                            Margin="8,8,8,0"
+                            Click="BtnResetColors_Click"
+                            ToolTipService.ToolTip="Reset all colours to theme defaults"/>
 
                 </StackPanel>
             </ScrollViewer>

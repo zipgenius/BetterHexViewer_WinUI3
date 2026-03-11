@@ -28,14 +28,43 @@ using Windows.UI.Text;
 
 namespace BetterHexViewer.WinUI3
 {
-    public enum OffsetFormat    { Hexadecimal, Decimal, Octal }
+    public enum OffsetFormat { Hexadecimal, Decimal, Octal }
     public enum ColumnGroupSize { One = 1, Two = 2, Four = 4, Eight = 8, Sixteen = 16 }
+
+    /// <summary>
+    /// Describes the current selection state of a <see cref="BetterHexViewer"/>.
+    /// Unlike <see cref="HexSelectionChangedEventArgs"/>, <see cref="Data"/> has
+    /// no length cap — it always contains the full selected content.
+    /// </summary>
+    public sealed class HexSelection
+    {
+        /// <summary>Byte offset of the first selected byte, or -1 when there is no selection.</summary>
+        public long StartOffset { get; }
+
+        /// <summary>Number of selected bytes (0 when there is no selection).</summary>
+        public long Length { get; }
+
+        /// <summary>
+        /// Full copy of the selected bytes — no length limit.
+        /// Empty array when there is no selection.
+        /// </summary>
+        public byte[] Data { get; }
+
+        /// <summary>Whether any bytes are currently selected.</summary>
+        public bool HasSelection => StartOffset >= 0 && Length > 0;
+
+        internal HexSelection(long start, long length, byte[] data)
+        { StartOffset = start; Length = length; Data = data; }
+
+        internal static readonly HexSelection Empty =
+            new HexSelection(-1, 0, Array.Empty<byte>());
+    }
 
     public sealed class HexSelectionChangedEventArgs : EventArgs
     {
-        public long   StartOffset { get; }
-        public long   Length      { get; }
-        public byte[] Data        { get; }
+        public long StartOffset { get; }
+        public long Length { get; }
+        public byte[] Data { get; }
         internal HexSelectionChangedEventArgs(long start, long length, byte[] data)
         { StartOffset = start; Length = length; Data = data; }
     }
@@ -47,57 +76,57 @@ namespace BetterHexViewer.WinUI3
     {
         // ─── Layout constants ─────────────────────────────────────────────
         private const double RulerExtraHeight = 8;
-        private const double HexExtraGap      = 12;
-        private const double AsciiRightPad    = 12;
-        private const double ScrollBarWidth   = 16;
-        private const double InnerByteGap     = 3;
-        private const double SelPad           = 2;
-        private const int    MinBytesPerLine  = 1;
+        private const double HexExtraGap = 12;
+        private const double AsciiRightPad = 12;
+        private const double ScrollBarWidth = 16;
+        private const double InnerByteGap = 3;
+        private const double SelPad = 2;
+        private const int MinBytesPerLine = 1;
 
         // ─── Win2D canvas ─────────────────────────────────────────────────
         private CanvasControl _canvas = null!;
 
         // ─── Tooltip overlay (Border + TextBlock in XAML template) ───────
-        private Border    _tooltipBorder = null!;
-        private TextBlock _tooltipText   = null!;
+        private Border _tooltipBorder = null!;
+        private TextBlock _tooltipText = null!;
         private Microsoft.UI.Xaml.DispatcherTimer? _tooltipTimer;
-        private long   _tooltipByteIdx = -1;
-        private Point  _tooltipPt;
+        private long _tooltipByteIdx = -1;
+        private Point _tooltipPt;
 
         // ─── Scrollbar state ──────────────────────────────────────────────
-        private int    _sbTotalLines   = 0;
-        private int    _sbVisibleLines = 1;
-        private bool   _sbDragging     = false;
-        private double _sbDragStartY   = 0;
-        private int    _sbDragStartTop = 0;
-        private double _wheelAccum     = 0;
+        private int _sbTotalLines = 0;
+        private int _sbVisibleLines = 1;
+        private bool _sbDragging = false;
+        private double _sbDragStartY = 0;
+        private int _sbDragStartTop = 0;
+        private double _wheelAccum = 0;
         private Microsoft.UI.Xaml.DispatcherTimer? _sbRepeatTimer;
-        private int    _sbRepeatDir   = 0;
-        private bool   _sbRepeatFirst = true;
+        private int _sbRepeatDir = 0;
+        private bool _sbRepeatFirst = true;
         private double _sbBtnUpBottom = 0;
-        private double _sbBtnDnTop    = 0;
-        private double _sbThumbTop    = 0;
-        private double _sbThumbBot    = 0;
+        private double _sbBtnDnTop = 0;
+        private double _sbThumbTop = 0;
+        private double _sbThumbBot = 0;
 
         // ─── UI helpers ───────────────────────────────────────────────────
         private MenuFlyout _contextMenu = null!;
 
         // ─── Data ─────────────────────────────────────────────────────────
-        private byte[] _buffer   = Array.Empty<byte>();
-        private long   _fileSize;
-        private int    _topLine;
+        private byte[] _buffer = Array.Empty<byte>();
+        private long _fileSize;
+        private int _topLine;
 
         // ─── Selection & hover ────────────────────────────────────────────
-        private long _selStart   = -1;
-        private long _selEnd     = -1;
-        private long _caretByte  = -1;
-        private long _hoverByte  = -1;   // byte under pointer (for hover highlight)
+        private long _selStart = -1;
+        private long _selEnd = -1;
+        private long _caretByte = -1;
+        private long _hoverByte = -1;   // byte under pointer (for hover highlight)
         private bool _mouseDown;
 
         // ─── Font metrics ─────────────────────────────────────────────────
-        private double _charWidth    = 8;
-        private double _lineHeight   = 16;
-        private int    _bytesPerLine = 16;
+        private double _charWidth = 8;
+        private double _lineHeight = 16;
+        private int _bytesPerLine = 16;
 
         // ─── Cached layout ────────────────────────────────────────────────
         private double _cachedHexStartX;
@@ -242,6 +271,36 @@ namespace BetterHexViewer.WinUI3
         }
         #endregion
 
+        #region OffsetBackground
+        /// <summary>
+        /// Background colour of the offset column area.
+        /// When null, it is auto-derived as a darker shade of <see cref="Control.Background"/>.
+        /// </summary>
+        public static readonly DependencyProperty OffsetBackgroundProperty =
+            DependencyProperty.Register(nameof(OffsetBackground), typeof(Brush),
+                typeof(BetterHexViewer), new PropertyMetadata(null, OnRenderPropertyChanged));
+        public Brush? OffsetBackground
+        {
+            get => (Brush?)GetValue(OffsetBackgroundProperty);
+            set => SetValue(OffsetBackgroundProperty, value);
+        }
+        #endregion
+
+        #region AsciiBackground
+        /// <summary>
+        /// Background colour of the ASCII panel area.
+        /// When null, defaults to the same value as <see cref="OffsetBackground"/>.
+        /// </summary>
+        public static readonly DependencyProperty AsciiBackgroundProperty =
+            DependencyProperty.Register(nameof(AsciiBackground), typeof(Brush),
+                typeof(BetterHexViewer), new PropertyMetadata(null, OnRenderPropertyChanged));
+        public Brush? AsciiBackground
+        {
+            get => (Brush?)GetValue(AsciiBackgroundProperty);
+            set => SetValue(AsciiBackgroundProperty, value);
+        }
+        #endregion
+
         #region OffsetForeground
         public static readonly DependencyProperty OffsetForegroundProperty =
             DependencyProperty.Register(nameof(OffsetForeground), typeof(Brush),
@@ -323,6 +382,29 @@ namespace BetterHexViewer.WinUI3
         private void SetFileSize(long v) => SetValue(FileSizeProperty, v);
         #endregion
 
+        #region Selection (read-only, no length limit)
+        /// <summary>
+        /// Returns the current selection as a <see cref="HexSelection"/> object.
+        /// <see cref="HexSelection.Data"/> contains the full selected bytes with
+        /// no length cap. Returns <see cref="HexSelection.Empty"/> when nothing
+        /// is selected or no data is loaded.
+        /// </summary>
+        public HexSelection Selection
+        {
+            get
+            {
+                if (_selStart < 0 || _selEnd < 0 || _buffer.Length == 0)
+                    return HexSelection.Empty;
+                long s = Math.Min(_selStart, _selEnd);
+                long e = Math.Max(_selStart, _selEnd);
+                long len = e - s + 1;
+                var data = new byte[len];
+                Array.Copy(_buffer, s, data, 0, len);
+                return new HexSelection(s, len, data);
+            }
+        }
+        #endregion
+
         public event EventHandler<HexSelectionChangedEventArgs>? SelectionChanged;
 
         // ═══════════════════════════════════════════════════════════════════
@@ -346,19 +428,19 @@ namespace BetterHexViewer.WinUI3
 
             _canvas = (CanvasControl)GetTemplateChild("PART_Canvas");
             _tooltipBorder = (Border)GetTemplateChild("PART_TooltipBorder");
-            _tooltipText   = (TextBlock)GetTemplateChild("PART_TooltipText");
+            _tooltipText = (TextBlock)GetTemplateChild("PART_TooltipText");
 
-            _canvas.Draw        += OnCanvasDraw;
+            _canvas.Draw += OnCanvasDraw;
             _canvas.SizeChanged += (_, _) => { UpdateBytesPerLine(); UpdateScrollBar(); _canvas.Invalidate(); };
 
-            _canvas.PointerPressed  += OnPointerPressed;
-            _canvas.PointerMoved    += OnPointerMoved;
-            _canvas.PointerMoved    += OnPointerHover;
+            _canvas.PointerPressed += OnPointerPressed;
+            _canvas.PointerMoved += OnPointerMoved;
+            _canvas.PointerMoved += OnPointerHover;
             _canvas.PointerReleased += OnPointerReleased;
-            _canvas.RightTapped     += OnRightTapped;
-            _canvas.PointerExited   += OnPointerExited;
-            _canvas.PointerPressed  += OnSbPointerPressed;
-            _canvas.PointerMoved    += OnSbPointerMoved;
+            _canvas.RightTapped += OnRightTapped;
+            _canvas.PointerExited += OnPointerExited;
+            _canvas.PointerPressed += OnSbPointerPressed;
+            _canvas.PointerMoved += OnSbPointerMoved;
             _canvas.PointerReleased += OnSbPointerReleased;
 
             ActualThemeChanged += (_, _) => { ApplyTheme(); _canvas.Invalidate(); };
@@ -404,7 +486,7 @@ namespace BetterHexViewer.WinUI3
 
         public void LoadBytes(byte[] data)
         {
-            _buffer   = data ?? Array.Empty<byte>();
+            _buffer = data ?? Array.Empty<byte>();
             _fileSize = _buffer.Length;
             SetFileSize(_fileSize);
             _selStart = -1; _selEnd = -1; _caretByte = -1; _topLine = 0;
@@ -442,7 +524,7 @@ namespace BetterHexViewer.WinUI3
         {
             if (_buffer.Length == 0 || _bytesPerLine == 0) return;
             int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine   = Math.Clamp((int)(offset / _bytesPerLine), 0, maxTop);
+            _topLine = Math.Clamp((int)(offset / _bytesPerLine), 0, maxTop);
             _canvas?.Invalidate();
         }
 
@@ -475,9 +557,9 @@ namespace BetterHexViewer.WinUI3
         private void BuildContextMenu()
         {
             _contextMenu = new MenuFlyout();
-            var copyHex   = new MenuFlyoutItem { Text = "Copy bytes (hex)" };
+            var copyHex = new MenuFlyoutItem { Text = "Copy bytes (hex)" };
             var copyAscii = new MenuFlyoutItem { Text = "Copy as ASCII" };
-            copyHex.Click   += (_, _) => CopySelectionAsHex();
+            copyHex.Click += (_, _) => CopySelectionAsHex();
             copyAscii.Click += (_, _) => CopySelectionAsAscii();
             _contextMenu.Items.Add(copyHex);
             _contextMenu.Items.Add(copyAscii);
@@ -507,14 +589,14 @@ namespace BetterHexViewer.WinUI3
             _mouseDown = true;
             long idx = HitTest(cp.Position.X, cp.Position.Y);
             if (idx >= 0) { _selStart = idx; _selEnd = idx; _caretByte = idx; }
-            else          { _selStart = -1;  _selEnd = -1;  _caretByte = -1; }
+            else { _selStart = -1; _selEnd = -1; _caretByte = -1; }
             ScheduleRender(); FireSelectionChanged();
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             if (!_mouseDown) return;
-            var pt   = e.GetCurrentPoint(_canvas).Position;
+            var pt = e.GetCurrentPoint(_canvas).Position;
             long idx = HitTest(pt.X, pt.Y);
             if (idx >= 0 && idx != _selEnd)
             {
@@ -532,7 +614,7 @@ namespace BetterHexViewer.WinUI3
         private void OnPointerHover(object sender, PointerRoutedEventArgs e)
         {
             if (_mouseDown) return;
-            var  pt  = e.GetCurrentPoint(_canvas).Position;
+            var pt = e.GetCurrentPoint(_canvas).Position;
             long idx = HitTest(pt.X, pt.Y);
 
             // Update hover highlight
@@ -555,7 +637,7 @@ namespace BetterHexViewer.WinUI3
             // New byte: restart delay timer
             HideTooltip();
             _tooltipByteIdx = idx;
-            _tooltipPt      = pt;
+            _tooltipPt = pt;
 
             _tooltipTimer = new Microsoft.UI.Xaml.DispatcherTimer
             {
@@ -586,22 +668,22 @@ namespace BetterHexViewer.WinUI3
             string offsetStr = OffsetFormat switch
             {
                 OffsetFormat.Decimal => $"Offset: {idx} (dec)",
-                OffsetFormat.Octal   => $"Offset: {Convert.ToString(idx, 8).PadLeft(11, '0')} (oct)",
-                _                   => $"Offset: 0x{idx:X8}",
+                OffsetFormat.Octal => $"Offset: {Convert.ToString(idx, 8).PadLeft(11, '0')} (oct)",
+                _ => $"Offset: 0x{idx:X8}",
             };
             string byteVal = $"Value: 0x{_buffer[idx]:X2} ({_buffer[idx]})"
                            + (ByteToAsciiChar(_buffer[idx]) != '·'
                               ? $" '{ByteToAsciiChar(_buffer[idx])}'" : string.Empty);
             _tooltipText.Text = $"{offsetStr}\n{byteVal}";
             Microsoft.UI.Xaml.Controls.Canvas.SetLeft(_tooltipBorder, pt.X + 14);
-            Microsoft.UI.Xaml.Controls.Canvas.SetTop (_tooltipBorder, pt.Y - 8);
+            Microsoft.UI.Xaml.Controls.Canvas.SetTop(_tooltipBorder, pt.Y - 8);
             _tooltipBorder.Visibility = Visibility.Visible;
         }
 
         private void HideTooltip()
         {
             _tooltipTimer?.Stop();
-            _tooltipTimer   = null;
+            _tooltipTimer = null;
             _tooltipByteIdx = -1;
             if (_tooltipBorder != null)
                 _tooltipBorder.Visibility = Visibility.Collapsed;
@@ -615,12 +697,12 @@ namespace BetterHexViewer.WinUI3
 
             double delta = e.GetCurrentPoint(this).Properties.MouseWheelDelta;
             _wheelAccum -= delta / 30.0;
-            int whole    = (int)_wheelAccum;
+            int whole = (int)_wheelAccum;
             _wheelAccum -= whole;
             if (whole != 0)
             {
                 int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-                _topLine   = Math.Clamp(_topLine + whole, 0, maxTop);
+                _topLine = Math.Clamp(_topLine + whole, 0, maxTop);
                 ScheduleRender();
             }
             e.Handled = true;
@@ -651,19 +733,19 @@ namespace BetterHexViewer.WinUI3
 
             if (pt.Y >= _sbThumbTop && pt.Y <= _sbThumbBot)
             {
-                _sbDragging     = true;
-                _sbDragStartY   = pt.Y;
+                _sbDragging = true;
+                _sbDragStartY = pt.Y;
                 _sbDragStartTop = _topLine;
             }
             else
             {
                 double trackTop = _sbBtnUpBottom;
-                double trackH   = Math.Max(1, _sbBtnDnTop - trackTop);
-                double relY     = Math.Max(0, pt.Y - trackTop);
-                int    maxTop   = _sbTotalLines - _sbVisibleLines;
-                _topLine        = Math.Clamp((int)(relY / trackH * _sbTotalLines), 0, maxTop);
-                _sbDragging     = true;
-                _sbDragStartY   = pt.Y;
+                double trackH = Math.Max(1, _sbBtnDnTop - trackTop);
+                double relY = Math.Max(0, pt.Y - trackTop);
+                int maxTop = _sbTotalLines - _sbVisibleLines;
+                _topLine = Math.Clamp((int)(relY / trackH * _sbTotalLines), 0, maxTop);
+                _sbDragging = true;
+                _sbDragStartY = pt.Y;
                 _sbDragStartTop = _topLine;
             }
             ScheduleRender();
@@ -673,18 +755,18 @@ namespace BetterHexViewer.WinUI3
         private void OnSbPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             if (!_sbDragging) return;
-            var    pt     = e.GetCurrentPoint(_canvas).Position;
+            var pt = e.GetCurrentPoint(_canvas).Position;
             double trackH = Math.Max(1, _sbBtnDnTop - _sbBtnUpBottom);
-            double dy     = pt.Y - _sbDragStartY;
-            int    maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine      = Math.Clamp(_sbDragStartTop + (int)(dy * _sbTotalLines / trackH), 0, maxTop);
+            double dy = pt.Y - _sbDragStartY;
+            int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
+            _topLine = Math.Clamp(_sbDragStartTop + (int)(dy * _sbTotalLines / trackH), 0, maxTop);
             ScheduleRender();
             e.Handled = true;
         }
 
         private void OnSbPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _sbDragging  = false;
+            _sbDragging = false;
             _sbRepeatDir = 0;
             StopSbRepeatTimer();
             _canvas.ReleasePointerCapture(e.Pointer);
@@ -694,16 +776,16 @@ namespace BetterHexViewer.WinUI3
         {
             if (_sbRepeatDir == 0) return;
             int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine   = Math.Clamp(_topLine + _sbRepeatDir * _sbVisibleLines, 0, maxTop);
+            _topLine = Math.Clamp(_topLine + _sbRepeatDir * _sbVisibleLines, 0, maxTop);
             ScheduleRender();
         }
 
         private void StartSbRepeatTimer(int initialDelayMs)
         {
             StopSbRepeatTimer();
-            _sbRepeatTimer          = new Microsoft.UI.Xaml.DispatcherTimer();
+            _sbRepeatTimer = new Microsoft.UI.Xaml.DispatcherTimer();
             _sbRepeatTimer.Interval = TimeSpan.FromMilliseconds(initialDelayMs);
-            _sbRepeatTimer.Tick    += (_, _) =>
+            _sbRepeatTimer.Tick += (_, _) =>
             {
                 if (_sbRepeatDir == 0) { StopSbRepeatTimer(); return; }
                 if (_sbRepeatFirst) { _sbRepeatFirst = false; _sbRepeatTimer!.Interval = TimeSpan.FromMilliseconds(80); }
@@ -733,8 +815,8 @@ namespace BetterHexViewer.WinUI3
 
         private void MeasureFont()
         {
-            double fs   = FontSize > 0 ? FontSize : 13;
-            _charWidth  = fs * 0.601;
+            double fs = FontSize > 0 ? FontSize : 13;
+            _charWidth = fs * 0.601;
             _lineHeight = fs * 1.35;
         }
 
@@ -743,7 +825,6 @@ namespace BetterHexViewer.WinUI3
         private void UpdateBytesPerLine()
         {
             if (_canvas == null) return;
-            MeasureFont();
 
             if (!FullWidth)
             {
@@ -757,14 +838,14 @@ namespace BetterHexViewer.WinUI3
             if (cw <= 0) return;
 
             double offsetW = OffsetColumnWidth();
-            double gap     = 2 * _charWidth;
-            int    g       = (int)ColumnGroupSize;
+            double gap = 2 * _charWidth;
+            int g = (int)ColumnGroupSize;
 
             double availW = cw - offsetW - gap - HexExtraGap - gap - AsciiRightPad;
             if (g > 1) availW -= BytesSpacing;
 
             double asciiSpacing = _charWidth / 2;
-            double byteAsciiW   = _charWidth + asciiSpacing;
+            double byteAsciiW = _charWidth + asciiSpacing;
 
             int newBpl;
             if (g <= 1)
@@ -787,11 +868,11 @@ namespace BetterHexViewer.WinUI3
 
         private void UpdateScrollBar()
         {
-            _sbTotalLines   = _buffer.Length == 0 || _bytesPerLine == 0
+            _sbTotalLines = _buffer.Length == 0 || _bytesPerLine == 0
                               ? 0
                               : (_buffer.Length + _bytesPerLine - 1) / _bytesPerLine;
             _sbVisibleLines = Math.Max(1, VisibleLineCount());
-            int maxTop      = Math.Max(0, _sbTotalLines - _sbVisibleLines);
+            int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
             if (_topLine > maxTop) _topLine = maxTop;
         }
 
@@ -813,11 +894,11 @@ namespace BetterHexViewer.WinUI3
             double dy = y - _cachedDividerY;
             if (dy < 0) return -1;
 
-            int  row     = (int)(dy / (_lineHeight + ExtraLineGap)) + _topLine;
+            int row = (int)(dy / (_lineHeight + ExtraLineGap)) + _topLine;
             long baseIdx = (long)row * _bytesPerLine;
             if (baseIdx < 0 || baseIdx >= _buffer.Length) return -1;
 
-            int    g            = (int)ColumnGroupSize;
+            int g = (int)ColumnGroupSize;
             double asciiSpacing = _charWidth / 2;
 
             double curX = _cachedHexStartX;
@@ -878,7 +959,7 @@ namespace BetterHexViewer.WinUI3
 
         private CanvasTextFormat GetFmt(bool bold)
         {
-            double fs  = FontSize > 0 ? FontSize : 13;
+            double fs = FontSize > 0 ? FontSize : 13;
             string src = FontFamily?.Source ?? "Courier New";
             string fam = src.Contains(',') ? src.Split(',')[0].Trim() : src;
             if (string.IsNullOrEmpty(fam)) fam = "Courier New";
@@ -891,9 +972,9 @@ namespace BetterHexViewer.WinUI3
                 if (_txFmtBold == null)
                     _txFmtBold = new CanvasTextFormat
                     {
-                        FontFamily   = fam,
-                        FontSize     = (float)fs,
-                        FontWeight   = FontWeights.Bold,
+                        FontFamily = fam,
+                        FontSize = (float)fs,
+                        FontWeight = FontWeights.Bold,
                         WordWrapping = CanvasWordWrapping.NoWrap
                     };
                 return _txFmtBold;
@@ -901,8 +982,8 @@ namespace BetterHexViewer.WinUI3
             if (_txFmt == null)
                 _txFmt = new CanvasTextFormat
                 {
-                    FontFamily   = fam,
-                    FontSize     = (float)fs,
+                    FontFamily = fam,
+                    FontSize = (float)fs,
                     WordWrapping = CanvasWordWrapping.NoWrap
                 };
             return _txFmt;
@@ -910,7 +991,7 @@ namespace BetterHexViewer.WinUI3
 
         private void InvalidateTxFormats()
         {
-            _txFmt?.Dispose();     _txFmt     = null;
+            _txFmt?.Dispose(); _txFmt = null;
             _txFmtBold?.Dispose(); _txFmtBold = null;
         }
 
@@ -919,8 +1000,8 @@ namespace BetterHexViewer.WinUI3
                                       Color color, CanvasTextFormat fmt)
         {
             using var tl = new CanvasTextLayout(ds, text, fmt, (float)cellW, (float)cellH);
-            float tx = (float)(x + (cellW  - tl.LayoutBounds.Width)  / 2);
-            float ty = (float)(y + (cellH  - tl.LayoutBounds.Height) / 2);
+            float tx = (float)(x + (cellW - tl.LayoutBounds.Width) / 2);
+            float ty = (float)(y + (cellH - tl.LayoutBounds.Height) / 2);
             ds.DrawTextLayout(tl, new Vector2(tx, ty), color);
         }
 
@@ -951,7 +1032,7 @@ namespace BetterHexViewer.WinUI3
         {
             int row = (int)(byteIdx / _bytesPerLine) - _topLine;
             int col = (int)(byteIdx % _bytesPerLine);
-            int g   = (int)ColumnGroupSize;
+            int g = (int)ColumnGroupSize;
             double y = dividerY + row * rowH;
             double x = _cachedHexStartX;
             for (int i = 0; i < col; i++) x += HexStep(i, g);
@@ -963,8 +1044,8 @@ namespace BetterHexViewer.WinUI3
         /// </summary>
         private (double x, double y, double w, double h) AsciiCellRect(long byteIdx, double dividerY, double rowH)
         {
-            int    row          = (int)(byteIdx / _bytesPerLine) - _topLine;
-            int    col          = (int)(byteIdx % _bytesPerLine);
+            int row = (int)(byteIdx / _bytesPerLine) - _topLine;
+            int col = (int)(byteIdx % _bytesPerLine);
             double asciiSpacing = _charWidth / 2;
             double y = dividerY + row * rowH;
             double x = _cachedAsciiStartX + col * (_charWidth + asciiSpacing);
@@ -975,90 +1056,115 @@ namespace BetterHexViewer.WinUI3
         {
             if (_canvas == null) return;
             double wf = _canvas.ActualWidth;
-            double w  = wf - ScrollBarWidth;
-            double h  = _canvas.ActualHeight;
+            double w = wf - ScrollBarWidth;
+            double h = _canvas.ActualHeight;
             if (w <= 0 || h <= 0) return;
 
-            var fmt     = GetFmt(bold: false);
+            var fmt = GetFmt(bold: false);
             var fmtBold = GetFmt(bold: true);
 
-            double offsetW      = OffsetColumnWidth();
-            double gap          = 2 * _charWidth;
-            int    g            = (int)ColumnGroupSize;
+            double offsetW = OffsetColumnWidth();
+            double gap = 2 * _charWidth;
+            int g = (int)ColumnGroupSize;
             double asciiSpacing = _charWidth / 2;
-            double rowH         = _lineHeight + ExtraLineGap;
+            double rowH = _lineHeight + ExtraLineGap;
 
-            double dividerY  = _lineHeight + RulerExtraHeight + 5;
+            double dividerY = _lineHeight + RulerExtraHeight + 5;
             double hexStartX = offsetW + gap + HexExtraGap;
-            _cachedDividerY  = dividerY;
+            _cachedDividerY = dividerY;
             _cachedHexStartX = hexStartX;
 
             double hexWidth = 0;
             for (int i = 0; i < _bytesPerLine; i++) hexWidth += HexStep(i, g);
-            double asciiStartX   = hexStartX + hexWidth + gap + (g > 1 ? BytesSpacing : 0);
-            _cachedAsciiStartX   = asciiStartX;
-            double asciiColW     = _bytesPerLine * (_charWidth + asciiSpacing) + AsciiRightPad;
+            double asciiStartX = hexStartX + hexWidth + gap + (g > 1 ? BytesSpacing : 0);
+            _cachedAsciiStartX = asciiStartX;
+            double asciiColW = _bytesPerLine * (_charWidth + asciiSpacing) + AsciiRightPad;
             _cachedAsciiColWidth = asciiColW;
 
-            bool  dark     = IsDark;
-            Color cBg      = BrushColor(Background,          dark ? Color.FromArgb(255,30,30,30)   : Color.FromArgb(255,250,249,248));
+            bool dark = IsDark;
+            Color cBg = BrushColor(Background, dark ? Color.FromArgb(255, 30, 30, 30) : Color.FromArgb(255, 250, 249, 248));
             Color cRulerBg = BlendColor(cBg, dark ? Colors.White : Colors.Black, 0.08f);
             Color cContent = BlendColor(cBg, dark ? Colors.White : Colors.Black, 0.04f);
-            Color cDivider = BrushColor(DividerBrush,        dark ? Color.FromArgb(255,80,80,80)   : Color.FromArgb(255,160,160,160));
-            Color cOffset  = BrushColor(OffsetForeground,    dark ? Color.FromArgb(255,100,180,255): Color.FromArgb(255,0,0,139));
+            Color cDivider = BrushColor(DividerBrush, dark ? Color.FromArgb(255, 80, 80, 80) : Color.FromArgb(255, 160, 160, 160));
+            Color cOffset = BrushColor(OffsetForeground, dark ? Color.FromArgb(255, 100, 180, 255) : Color.FromArgb(255, 0, 0, 139));
             // RulerForeground: use DP if set, otherwise auto-derive with high contrast from cBg
             Color cRulerFg = RulerForeground is SolidColorBrush rfb
                              ? rfb.Color
                              : BlendColor(cBg, (cBg.R * 0.299 + cBg.G * 0.587 + cBg.B * 0.114) < 128 ? Colors.White : Colors.Black, 0.80f);
-            Color cData    = BrushColor(Foreground,          dark ? Color.FromArgb(255,220,220,220): Colors.Black);
-            Color cSelBg   = BrushColor(SelectionBackground, dark ? Color.FromArgb(255,0,100,200)  : Color.FromArgb(255,0,120,215));
-            Color cSelFg   = BrushColor(SelectionForeground, Colors.White);
+            Color cData = BrushColor(Foreground, dark ? Color.FromArgb(255, 220, 220, 220) : Colors.Black);
+            Color cSelBg = BrushColor(SelectionBackground, dark ? Color.FromArgb(255, 0, 100, 200) : Color.FromArgb(255, 0, 120, 215));
+            Color cSelFg = BrushColor(SelectionForeground, Colors.White);
+            // OffsetBackground: explicit DP or auto-derive as darker shade of cBg
+            Color cOffsetBg = OffsetBackground is SolidColorBrush obb
+                              ? obb.Color
+                              : BlendColor(cBg, dark ? Colors.Black : Colors.Black, 0.12f);
+            // AsciiBackground: explicit DP or same as cOffsetBg
+            Color cAsciiBg = AsciiBackground is SolidColorBrush abb
+                              ? abb.Color
+                              : cOffsetBg;
             // Hover border: semi-transparent version of cData
-            Color cHover   = Color.FromArgb(160, cRulerFg.R, cRulerFg.G, cRulerFg.B);
+            Color cHover = Color.FromArgb(160, cRulerFg.R, cRulerFg.G, cRulerFg.B);
 
             // PASS 1 – backgrounds
             ds.FillRectangle(0, 0, (float)wf, (float)h, cBg);
             ds.FillRectangle(0, 0, (float)wf, (float)dividerY, cRulerBg);
             float contentX = (float)(offsetW + gap / 2);
-            ds.FillRectangle(contentX, (float)(dividerY + 1),
-                             (float)(w - contentX), (float)(h - dividerY - 1), cContent);
+            // Offset column band (darker)
+            ds.FillRectangle(0, (float)(dividerY + 1),
+                             contentX, (float)(h - dividerY - 1), cOffsetBg);
+            // Hex bytes area — only up to the start of the ASCII panel (or end of hex if no ASCII)
+            float hexEndX = ShowAsciiPanel
+                ? (float)(asciiStartX - gap / 2)
+                : (float)(hexStartX + hexWidth + gap);
+            if (hexEndX > contentX)
+                ds.FillRectangle(contentX, (float)(dividerY + 1),
+                                 hexEndX - contentX, (float)(h - dividerY - 1), cContent);
+            // ASCII panel band (same as offset by default) — only up to actual content width
+            if (ShowAsciiPanel)
+            {
+                float ascX = (float)(asciiStartX - gap / 2);
+                float ascW = (float)(_cachedAsciiColWidth + gap / 2);
+                if (ascW > 0)
+                    ds.FillRectangle(ascX, (float)(dividerY + 1),
+                                     ascW, (float)(h - dividerY - 1), cAsciiBg);
+            }
 
             // PASS 2 – selection highlights
             if (_buffer.Length > 0)
             {
-                long selS   = Math.Min(_selStart, _selEnd);
-                long selE   = Math.Max(_selStart, _selEnd);
+                long selS = Math.Min(_selStart, _selEnd);
+                long selE = Math.Max(_selStart, _selEnd);
                 bool hasSel = selS >= 0 && selE >= 0;
-                int  vl     = VisibleLineCount() + 1;
+                int vl = VisibleLineCount() + 1;
 
                 for (int line = 0; line < vl; line++)
                 {
-                    int  row    = _topLine + line;
+                    int row = _topLine + line;
                     long offset = (long)row * _bytesPerLine;
                     if (offset >= _buffer.Length) break;
 
-                    double y    = dividerY + line * rowH;
+                    double y = dividerY + line * rowH;
                     double xHex = hexStartX;
                     double xAsc = asciiStartX;
 
-                    bool   inHexRun   = false;
+                    bool inHexRun = false;
                     double hexRunLeft = 0, lastSelX = 0;
-                    long   lastSelIdx = -1;
+                    long lastSelIdx = -1;
                     double ascLeft = double.MaxValue, ascRight = double.MinValue;
 
                     for (int i = 0; i < _bytesPerLine; i++)
                     {
-                        long bi   = offset + i;
+                        long bi = offset + i;
                         if (bi >= _buffer.Length) break;
-                        bool isSel   = hasSel && bi >= selS && bi <= selE;
+                        bool isSel = hasSel && bi >= selS && bi <= selE;
                         bool isCaret = bi == _caretByte && !isSel;
-                        double step  = HexStep(i, g);
+                        double step = HexStep(i, g);
 
                         if (isSel)
                         {
                             if (!inHexRun)
                             {
-                                inHexRun   = true;
+                                inHexRun = true;
                                 hexRunLeft = xHex - (bi == selS ? SelPad : 0);
                             }
                             lastSelX = xHex; lastSelIdx = bi;
@@ -1066,7 +1172,7 @@ namespace BetterHexViewer.WinUI3
                             {
                                 double al = xAsc - (bi == selS ? SelPad : 0);
                                 double ar = xAsc + _charWidth + asciiSpacing + (bi == selE ? SelPad : 0);
-                                if (al < ascLeft)  ascLeft  = al;
+                                if (al < ascLeft) ascLeft = al;
                                 if (ar > ascRight) ascRight = ar;
                             }
                         }
@@ -1134,18 +1240,18 @@ namespace BetterHexViewer.WinUI3
             }
 
             // PASS 5 – data rows
-            long sS      = Math.Min(_selStart, _selEnd);
-            long sE      = Math.Max(_selStart, _selEnd);
+            long sS = Math.Min(_selStart, _selEnd);
+            long sE = Math.Max(_selStart, _selEnd);
             bool hasSelT = sS >= 0 && sE >= 0;
-            int  vLines  = VisibleLineCount() + 1;
+            int vLines = VisibleLineCount() + 1;
 
             for (int line = 0; line < vLines; line++)
             {
-                int  row     = _topLine + line;
+                int row = _topLine + line;
                 long offset2 = (long)row * _bytesPerLine;
                 if (offset2 >= _buffer.Length) break;
 
-                double y2   = dividerY + line * rowH;
+                double y2 = dividerY + line * rowH;
                 double xHex = hexStartX;
                 double xAsc = asciiStartX;
 
@@ -1155,16 +1261,16 @@ namespace BetterHexViewer.WinUI3
                 {
                     long bi = offset2 + i;
                     if (bi >= _buffer.Length) break;
-                    bool   isSel = hasSelT && bi >= sS && bi <= sE;
-                    double step  = HexStep(i, g);
-                    Color  hexFg = isSel ? cSelFg : cData;
+                    bool isSel = hasSelT && bi >= sS && bi <= sE;
+                    double step = HexStep(i, g);
+                    Color hexFg = isSel ? cSelFg : cData;
 
                     TxCenter(ds, _buffer[bi].ToString("X2"), xHex, y2,
                               2 * _charWidth, rowH, hexFg, fmt);
 
                     if (ShowAsciiPanel)
                     {
-                        char  ch = ByteToAsciiChar(_buffer[bi]);
+                        char ch = ByteToAsciiChar(_buffer[bi]);
                         Color fg = isSel ? cSelFg : cData;
                         TxCenter(ds, ch.ToString(), xAsc, y2,
                                   _charWidth + asciiSpacing, rowH, fg, fmt);
@@ -1197,50 +1303,50 @@ namespace BetterHexViewer.WinUI3
 
         private void RenderScrollBar(CanvasDrawingSession ds, double wf, double h)
         {
-            double sbX    = wf - ScrollBarWidth;
-            double sw     = ScrollBarWidth;
-            bool   canScr = _sbTotalLines > _sbVisibleLines;
-            bool   dark   = IsDark;
+            double sbX = wf - ScrollBarWidth;
+            double sw = ScrollBarWidth;
+            bool canScr = _sbTotalLines > _sbVisibleLines;
+            bool dark = IsDark;
 
-            Color trackColor = dark ? Color.FromArgb(255,44,44,44)    : Color.FromArgb(255,240,240,240);
-            Color btnColor   = dark ? Color.FromArgb(255,60,60,60)    : Color.FromArgb(255,225,225,225);
-            Color arrowColor = dark ? Color.FromArgb(255,180,180,180) : Color.FromArgb(255,100,100,100);
+            Color trackColor = dark ? Color.FromArgb(255, 44, 44, 44) : Color.FromArgb(255, 240, 240, 240);
+            Color btnColor = dark ? Color.FromArgb(255, 60, 60, 60) : Color.FromArgb(255, 225, 225, 225);
+            Color arrowColor = dark ? Color.FromArgb(255, 180, 180, 180) : Color.FromArgb(255, 100, 100, 100);
             Color thumbColor = !canScr ? Colors.Transparent
                              : dark
-                                 ? (_sbDragging ? Color.FromArgb(255,190,190,190) : Color.FromArgb(255,120,120,120))
-                                 : (_sbDragging ? Color.FromArgb(255,90,90,90)    : Color.FromArgb(255,152,152,152));
+                                 ? (_sbDragging ? Color.FromArgb(255, 190, 190, 190) : Color.FromArgb(255, 120, 120, 120))
+                                 : (_sbDragging ? Color.FromArgb(255, 90, 90, 90) : Color.FromArgb(255, 152, 152, 152));
 
-            double areaTop  = _cachedDividerY + 1;
-            double btnH     = sw;
+            double areaTop = _cachedDividerY + 1;
+            double btnH = sw;
             double btnUpTop = areaTop;
             double btnUpBot = areaTop + btnH;
-            _sbBtnUpBottom  = btnUpBot;
+            _sbBtnUpBottom = btnUpBot;
 
             ds.FillRectangle((float)sbX, (float)btnUpTop, (float)sw, (float)btnH, btnColor);
             float acx = (float)(sbX + sw / 2), amid = (float)(btnUpTop + btnH / 2);
             for (int i = 0; i < 4; i++)
-                ds.FillRectangle(acx - (1+i), amid - 2 + i, (1+i)*2, 1, arrowColor);
+                ds.FillRectangle(acx - (1 + i), amid - 2 + i, (1 + i) * 2, 1, arrowColor);
 
             double btnDnTop = h - btnH;
-            _sbBtnDnTop     = btnDnTop;
+            _sbBtnDnTop = btnDnTop;
             ds.FillRectangle((float)sbX, (float)btnDnTop, (float)sw, (float)btnH, btnColor);
             float dmid = (float)(btnDnTop + btnH / 2);
             for (int i = 0; i < 4; i++)
-                ds.FillRectangle(acx - (4-i), dmid - 2 + i, (4-i)*2, 1, arrowColor);
+                ds.FillRectangle(acx - (4 - i), dmid - 2 + i, (4 - i) * 2, 1, arrowColor);
 
             double trackTop = btnUpBot;
-            double trackH   = Math.Max(0, btnDnTop - trackTop);
+            double trackH = Math.Max(0, btnDnTop - trackTop);
             ds.FillRectangle((float)sbX, (float)trackTop, (float)sw, (float)trackH, trackColor);
 
             if (canScr && trackH > 0)
             {
                 double thumbH = Math.Max(20, trackH * _sbVisibleLines / (double)_sbTotalLines);
-                int    maxTop = _sbTotalLines - _sbVisibleLines;
+                int maxTop = _sbTotalLines - _sbVisibleLines;
                 double thumbY = trackTop + (trackH - thumbH) * _topLine / (double)maxTop;
-                _sbThumbTop   = thumbY;
-                _sbThumbBot   = thumbY + thumbH;
-                ds.FillRoundedRectangle((float)(sbX+3), (float)thumbY,
-                                        (float)(sw-6), (float)thumbH, 3, 3, thumbColor);
+                _sbThumbTop = thumbY;
+                _sbThumbBot = thumbY + thumbH;
+                ds.FillRoundedRectangle((float)(sbX + 3), (float)thumbY,
+                                        (float)(sw - 6), (float)thumbH, 3, 3, thumbColor);
             }
             else { _sbThumbTop = _sbThumbBot = 0; }
         }
@@ -1255,17 +1361,19 @@ namespace BetterHexViewer.WinUI3
         {
             bool dark = IsDark;
             Background = new SolidColorBrush(dark
-                ? Color.FromArgb(255,30,30,30) : Color.FromArgb(255,250,249,248));
+                ? Color.FromArgb(255, 30, 30, 30) : Color.FromArgb(255, 250, 249, 248));
             Foreground = new SolidColorBrush(dark
-                ? Color.FromArgb(255,220,220,220) : Color.FromArgb(255,27,27,27));
+                ? Color.FromArgb(255, 220, 220, 220) : Color.FromArgb(255, 27, 27, 27));
             OffsetForeground = new SolidColorBrush(dark
-                ? Color.FromArgb(255,100,180,255) : Color.FromArgb(255,0,0,139));
+                ? Color.FromArgb(255, 100, 180, 255) : Color.FromArgb(255, 0, 0, 139));
             DividerBrush = new SolidColorBrush(dark
-                ? Color.FromArgb(255,80,80,80) : Color.FromArgb(255,160,160,160));
+                ? Color.FromArgb(255, 80, 80, 80) : Color.FromArgb(255, 160, 160, 160));
             SelectionBackground = new SolidColorBrush(dark
-                ? Color.FromArgb(255,0,100,200) : Color.FromArgb(255,0,120,215));
+                ? Color.FromArgb(255, 0, 100, 200) : Color.FromArgb(255, 0, 120, 215));
             SelectionForeground = new SolidColorBrush(Colors.White);
-            RulerForeground     = null;   // auto-derive from background
+            RulerForeground = null;   // auto-derive from background
+            OffsetBackground = null;   // auto-derive as darker shade of Background
+            AsciiBackground = null;   // defaults to OffsetBackground
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -1294,9 +1402,9 @@ namespace BetterHexViewer.WinUI3
         private string FormatOffset(long offset) => OffsetFormat switch
         {
             OffsetFormat.Hexadecimal => $"  {offset:X8}     ",
-            OffsetFormat.Decimal     => $"  {offset,10}   ",
-            OffsetFormat.Octal       => $"  {ToOctal(offset)}  ",
-            _                        => $"  {offset:X8}     "
+            OffsetFormat.Decimal => $"  {offset,10}   ",
+            OffsetFormat.Octal => $"  {ToOctal(offset)}  ",
+            _ => $"  {offset:X8}     "
         };
 
         private static string ToOctal(long value)
@@ -1325,9 +1433,9 @@ namespace BetterHexViewer.WinUI3
                 return;
             }
             long s = Math.Min(_selStart, _selEnd), e = Math.Max(_selStart, _selEnd);
-            long len     = e - s + 1;
-            int  copyLen = (int)Math.Min(len, 65536);
-            var  copy    = new byte[copyLen];
+            long len = e - s + 1;
+            int copyLen = (int)Math.Min(len, 5 * 1024 * 1024);
+            var copy = new byte[copyLen];
             Array.Copy(_buffer, s, copy, 0, copyLen);
             SelectionChanged(this, new HexSelectionChangedEventArgs(s, len, copy));
         }
