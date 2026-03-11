@@ -29,7 +29,7 @@
 | Feature | Detail |
 |---|---|
 | **GPU-accelerated rendering** | Win2D `CanvasControl` — one `DrawingSession` per frame, ~2 ms CPU time at 4K |
-| **Large-file support** | Async streaming; first 1 MB buffered. Files > 1 MB show a status indicator |
+| **Large-file support** | Files of any size via `MemoryMappedFile` — no read limit, OS handles paging transparently |
 | **Mouse selection** | Click-drag to select bytes; hex and ASCII panels stay in sync |
 | **Hover cross-highlight** | 1 px border follows the pointer in both hex and ASCII panels simultaneously |
 | **Context menu** | Right-click → copy selection as hex string or ASCII string |
@@ -42,7 +42,7 @@
 | **Font control** | `FontFamily`, `FontSize`, `FontWeight` — all hot-reloadable at runtime |
 | **Colour themes** | All brushes are bindable: `Background`, `Foreground`, `OffsetForeground`, `RulerForeground`, `SelectionBackground`, `SelectionForeground`, `DividerBrush` |
 | **Tooltip** | 500 ms hover tooltip showing offset and byte value; correct positioning at any window location |
-| **SelectionChanged event** | `StartOffset`, `Length`, `byte[]` copy of selected data (max 64 KB) |
+| **SelectionChanged event** | `StartOffset`, `Length`, `byte[]` copy of selected data (max 5 MB) |
 | **ScrollToOffset** | Programmatically scroll to any byte offset |
 | **LoadBytes** | Load a `byte[]` directly without a file |
 
@@ -163,6 +163,7 @@ HexViewer.AsciiEncoding = Encoding.UTF8;
 | `CopySelectionAsHex()` | Copies selection to clipboard as space-separated hex pairs |
 | `CopySelectionAsAscii()` | Copies selection to clipboard as ASCII text |
 | `ScrollToOffset(long offset)` | Scrolls to the row containing the given byte offset |
+| `Dispose()` | Releases the memory-mapped file handle opened by `OpenFileAsync` |
 
 ---
 
@@ -173,7 +174,7 @@ HexViewer.SelectionChanged += (sender, e) =>
 {
     // e.StartOffset : long   – first selected byte offset (-1 = no selection)
     // e.Length      : long   – number of selected bytes
-    // e.Data        : byte[] – copy of up to 64 KB of selected bytes
+    // e.Data        : byte[] – copy of up to 5 MB of selected bytes
 };
 ```
 

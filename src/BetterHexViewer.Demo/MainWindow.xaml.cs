@@ -103,7 +103,7 @@ namespace BetterHexViewer.Demo
                 }
                 catch { /* not available on this system */ }
             }
-            CmbEncoding.ItemsSource = available;
+            CmbEncoding.ItemsSource   = available;
             CmbEncoding.SelectedIndex = 0;   // Latin-1 default
         }
 
@@ -128,7 +128,7 @@ namespace BetterHexViewer.Demo
                     using var fmt = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
                     {
                         FontFamily = name,
-                        FontSize = 13
+                        FontSize   = 13
                     };
                     // Create a tiny layout to force font resolution.
                     // If the font doesn't exist Win2D silently falls back;
@@ -147,7 +147,7 @@ namespace BetterHexViewer.Demo
 
             // Select the current font
             string current = HexViewer?.FontFamily?.Source ?? "Courier New";
-            string first = current.Contains(',') ? current.Split(',')[0].Trim() : current;
+            string first   = current.Contains(',') ? current.Split(',')[0].Trim() : current;
             int idx = available.IndexOf(first);
             CmbFont.SelectedIndex = idx >= 0 ? idx : available.IndexOf("Courier New");
         }
@@ -211,11 +211,11 @@ namespace BetterHexViewer.Demo
             {
                 // Build hex preview (first 64 bytes max for display)
                 int previewLen = (int)Math.Min(sel.Length, 64);
-                var hexParts = new System.Text.StringBuilder();
+                var hexParts   = new System.Text.StringBuilder();
                 for (int i = 0; i < previewLen; i++)
                 {
                     if (i > 0 && i % 16 == 0) hexParts.Append('\n');
-                    else if (i > 0) hexParts.Append(' ');
+                    else if (i > 0)            hexParts.Append(' ');
                     hexParts.Append(sel.Data[i].ToString("X2"));
                 }
                 if (sel.Length > 64)
@@ -230,16 +230,16 @@ namespace BetterHexViewer.Demo
 
             var dialog = new ContentDialog
             {
-                Title = "Selection — HexViewer.Selection",
-                Content = new TextBlock
+                Title             = "Selection — HexViewer.Selection",
+                Content           = new TextBlock
                 {
-                    Text = message,
-                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Cascadia Mono, Consolas, Courier New"),
-                    FontSize = 12,
+                    Text         = message,
+                    FontFamily   = new Microsoft.UI.Xaml.Media.FontFamily("Cascadia Mono, Consolas, Courier New"),
+                    FontSize     = 12,
                     TextWrapping = TextWrapping.Wrap
                 },
                 CloseButtonText = "OK",
-                XamlRoot = Content.XamlRoot
+                XamlRoot        = Content.XamlRoot
             };
             await dialog.ShowAsync();
         }
@@ -263,8 +263,6 @@ namespace BetterHexViewer.Demo
                 long sz = HexViewer.FileSize;
                 TxtFileName.Text = file.Path;
                 TxtFileSize.Text = FormatSize(sz);
-                if (sz > 1024 * 1024)
-                    TxtFileSize.Text += " (first 1 MB loaded)";
             }
             catch (Exception ex)
             {
@@ -349,29 +347,29 @@ namespace BetterHexViewer.Demo
             switch (CmbTheme.SelectedIndex)
             {
                 case 1: // Dark
-                    SetColors(Color.FromArgb(255, 30, 30, 30),
-                              Color.FromArgb(255, 220, 220, 220),
-                              Color.FromArgb(255, 100, 180, 255),
-                              Color.FromArgb(255, 80, 80, 80),
-                              Color.FromArgb(255, 0, 100, 200),
+                    SetColors(Color.FromArgb(255,30,30,30),
+                              Color.FromArgb(255,220,220,220),
+                              Color.FromArgb(255,100,180,255),
+                              Color.FromArgb(255,80,80,80),
+                              Color.FromArgb(255,0,100,200),
                               Colors.White);
                     break;
 
                 case 2: // Matrix
                     SetColors(Colors.Black,
-                              Color.FromArgb(255, 0, 200, 0),
-                              Color.FromArgb(255, 0, 255, 0),
-                              Color.FromArgb(255, 0, 100, 0),
-                              Color.FromArgb(255, 0, 140, 0),
+                              Color.FromArgb(255,0,200,0),
+                              Color.FromArgb(255,0,255,0),
+                              Color.FromArgb(255,0,100,0),
+                              Color.FromArgb(255,0,140,0),
                               Colors.Black);
                     break;
 
                 default: // Light
-                    SetColors(Color.FromArgb(255, 250, 249, 248),
-                              Color.FromArgb(255, 27, 27, 27),
-                              Color.FromArgb(255, 0, 0, 139),
+                    SetColors(Color.FromArgb(255,250,249,248),
+                              Color.FromArgb(255,27,27,27),
+                              Color.FromArgb(255,0,0,139),
                               Colors.Gray,
-                              Color.FromArgb(255, 0, 120, 215),
+                              Color.FromArgb(255,0,120,215),
                               Colors.White);
                     break;
             }
@@ -380,12 +378,15 @@ namespace BetterHexViewer.Demo
         private void SetColors(Color bg, Color fg, Color offset, Color divider,
                                 Color selBg, Color selFg)
         {
-            HexViewer.Background = new SolidColorBrush(bg);
-            HexViewer.Foreground = new SolidColorBrush(fg);
-            HexViewer.OffsetForeground = new SolidColorBrush(offset);
-            HexViewer.DividerBrush = new SolidColorBrush(divider);
+            HexViewer.Background          = new SolidColorBrush(bg);
+            HexViewer.Foreground          = new SolidColorBrush(fg);
+            HexViewer.OffsetForeground    = new SolidColorBrush(offset);
+            HexViewer.DividerBrush        = new SolidColorBrush(divider);
             HexViewer.SelectionBackground = new SolidColorBrush(selBg);
             HexViewer.SelectionForeground = new SolidColorBrush(selFg);
+            // Let Render() auto-derive offset/ascii backgrounds from the new Background
+            HexViewer.OffsetBackground    = null;
+            HexViewer.AsciiBackground     = null;
 
             UpdateSwatches(bg, fg, offset, divider, selBg, selFg);
         }
@@ -394,15 +395,15 @@ namespace BetterHexViewer.Demo
                                     Color selBg, Color selFg)
         {
             if (SwatchBg == null) return;
-            SwatchBg.Background = new SolidColorBrush(bg);
-            SwatchFg.Background = new SolidColorBrush(fg);
+            SwatchBg.Background     = new SolidColorBrush(bg);
+            SwatchFg.Background     = new SolidColorBrush(fg);
             SwatchOffset.Background = new SolidColorBrush(offset);
-            SwatchDivider.Background = new SolidColorBrush(divider);
-            SwatchSelBg.Background = new SolidColorBrush(selBg);
-            SwatchSelFg.Background = new SolidColorBrush(selFg);
+            SwatchDivider.Background= new SolidColorBrush(divider);
+            SwatchSelBg.Background  = new SolidColorBrush(selBg);
+            SwatchSelFg.Background  = new SolidColorBrush(selFg);
             // OffsetBg/AsciiBg are null (auto) after a theme reset — show neutral swatch
             SwatchOffsetBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200));
-            SwatchAsciiBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200));
+            SwatchAsciiBg.Background  = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 200, 200, 200));
         }
 
         // ─── Individual colour pickers ────────────────────────────────────
@@ -459,11 +460,11 @@ namespace BetterHexViewer.Demo
             CmbTheme.SelectedIndex = 0;
             // Also reset the new auto-derived properties
             HexViewer.OffsetBackground = null;
-            HexViewer.AsciiBackground = null;
-            HexViewer.RulerForeground = null;
+            HexViewer.AsciiBackground  = null;
+            HexViewer.RulerForeground  = null;
             // Refresh swatches to reflect auto state
             SwatchOffsetBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
-            SwatchAsciiBg.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
+            SwatchAsciiBg.Background  = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 232, 232, 232));
         }
 
         private async void BtnColorSelFg_Click(object sender, RoutedEventArgs e)
@@ -480,20 +481,20 @@ namespace BetterHexViewer.Demo
         {
             var picker = new ColorPicker
             {
-                Color = initial,
+                Color              = initial,
                 ColorSpectrumShape = ColorSpectrumShape.Ring,
-                IsAlphaEnabled = false,
-                IsHexInputVisible = true,
-                Width = 280
+                IsAlphaEnabled     = false,
+                IsHexInputVisible  = true,
+                Width              = 280
             };
 
             var dialog = new ContentDialog
             {
-                Title = "Pick a colour",
-                Content = picker,
+                Title             = "Pick a colour",
+                Content           = picker,
                 PrimaryButtonText = "OK",
-                CloseButtonText = "Cancel",
-                XamlRoot = Content.XamlRoot
+                CloseButtonText   = "Cancel",
+                XamlRoot          = Content.XamlRoot
             };
 
             var result = await dialog.ShowAsync();
@@ -519,8 +520,8 @@ namespace BetterHexViewer.Demo
 
         private static string FormatSize(long bytes)
         {
-            if (bytes < 1024) return $"{bytes} B";
-            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+            if (bytes < 1024)            return $"{bytes} B";
+            if (bytes < 1024 * 1024)     return $"{bytes / 1024.0:F1} KB";
             if (bytes < 1024 * 1024 * 1024L) return $"{bytes / (1024.0 * 1024):F1} MB";
             return $"{bytes / (1024.0 * 1024 * 1024):F2} GB";
         }

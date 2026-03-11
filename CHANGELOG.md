@@ -5,6 +5,43 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.1] – 2026-03-11
+
+### Added
+- **Auto-scroll during selection drag** — dragging the pointer above or below
+  the content area scrolls the view automatically and extends the selection,
+  with speed proportional to the distance from the edge.
+- **`IDisposable`** — control now implements `IDisposable`; `Dispose()` and the
+  `Unloaded` event both release the memory-mapped file handle.
+
+### Changed
+- **Large-file support via `MemoryMappedFile`** — `OpenFileAsync` no longer
+  limits reading to 1 MB. Files of any size (tested up to 3.84 GB) are opened
+  via `System.IO.MemoryMappedFiles`; the OS handles paging transparently.
+  `LoadBytes(byte[])` continues to work unchanged.
+- **Offset / ASCII background colours** — `OffsetBackground` and
+  `AsciiBackground` now have explicit Light (`#F2F2F2`) and Dark (`#282828`)
+  defaults set in `PropertyMetadata` and `ApplyTheme()`; the bytes area uses
+  `#FEFEFE` (Light) or the blended dark value. Custom themes (Matrix, etc.)
+  auto-derive offset/ascii backgrounds from `Background` using perceived
+  luminance so they are always distinguishable.
+- **Ruler header vertical centering** — `OFFSET`, column numbers, and `ASCII`
+  label are now perfectly centred in the full ruler band height.
+- **`MeasureFont()` call site** — removed from `UpdateBytesPerLine()`;
+  called only in `OnApplyTemplate` and `OnFontPropertyChanged`, eliminating
+  residual per-scroll flickering.
+- **Demo icon** — `.ico` embedded as Win32 resource (`IDI_ICON1`) so Windows
+  uses pre-rendered 16/24/32/48 px frames for taskbar and Explorer instead of
+  downscaling the 256 px frame.
+- Demo: removed `"(first 1 MB loaded)"` status message (no longer applicable).
+
+### Fixed
+- Empty area to the right of the ASCII panel (when `FullWidth = false`) now
+  shows the application window background instead of the ASCII panel colour.
+- `CS0266` long-to-int implicit conversion errors in `UpdateScrollBar`,
+  `Selection` property, and `FireSelectionChanged`.
+- Duplicate `#endregion` preprocessor directive.
+
 ## [1.1.0] – 2026-03-10
 
 ### Added
