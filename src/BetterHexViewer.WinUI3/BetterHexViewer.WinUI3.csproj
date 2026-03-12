@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BetterHexViewer.WinUI3</RootNamespace>
     <AssemblyName>BetterHexViewer.WinUI3</AssemblyName>
@@ -37,18 +37,19 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md"           Pack="true" PackagePath="\"/>
-    <None Include="..\..\Graphics\icon.png"   Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\Graphics\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK"        Version="1.8.260209005"/>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705"/>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
     <!-- Win2D: GPU-accelerated 2D drawing via DirectX. Required for CanvasControl rendering. -->
-    <PackageReference Include="Microsoft.Graphics.Win2D"       Version="1.3.0"/>
+    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.0" />
   </ItemGroup>
 
 </Project>
