@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.3
+// Version: 1.1.4
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -115,11 +115,11 @@ namespace BetterHexViewer.WinUI3
         private Point  _tooltipPt;
 
         // ─── Scrollbar state ──────────────────────────────────────────────
-        private int    _sbTotalLines   = 0;
-        private int    _sbVisibleLines = 1;
+        private long   _sbTotalLines   = 0;
+        private long   _sbVisibleLines = 1;
         private bool   _sbDragging     = false;
         private double _sbDragStartY   = 0;
-        private int    _sbDragStartTop = 0;
+        private long   _sbDragStartTop = 0;
         private double _wheelAccum     = 0;
         private Microsoft.UI.Xaml.DispatcherTimer? _sbRepeatTimer;
         private int    _sbRepeatDir   = 0;
@@ -159,7 +159,7 @@ namespace BetterHexViewer.WinUI3
             _bytes    = null;
             _fileSize = 0;
         }
-        private int    _topLine;
+        private long   _topLine;
 
         // ─── Selection & hover ────────────────────────────────────────────
         private long _selStart   = -1;
@@ -185,6 +185,7 @@ namespace BetterHexViewer.WinUI3
         // ─── Win2D text formats ───────────────────────────────────────────
         private CanvasTextFormat? _txFmt;
         private CanvasTextFormat? _txFmtBold;
+        private UIElement?        _rootContent;
 
         // ═══════════════════════════════════════════════════════════════════
         //  DEPENDENCY PROPERTIES
@@ -481,8 +482,35 @@ namespace BetterHexViewer.WinUI3
             // Light-theme defaults — overridden by ApplyTheme() once OnApplyTemplate runs
             Background = new SolidColorBrush(Color.FromArgb(255, 254, 254, 254));
             Foreground = new SolidColorBrush(Color.FromArgb(255,  27,  27,  27));
+            // Allow keyboard focus via Tab and mouse click
+            IsTabStop       = true;
+            TabNavigation   = KeyboardNavigationMode.Once;
             // Release memory-mapped file when the control is unloaded from the visual tree
-            Unloaded += (_, _) => ReleaseData();
+            Unloaded += (_, _) =>
+            {
+                ReleaseData();
+                if (_rootContent != null)
+                {
+                    _rootContent.RemoveHandler(KeyDownEvent,       (KeyEventHandler)OnRootKeyDown);
+                    _rootContent.RemoveHandler(PointerPressedEvent,(PointerEventHandler)OnRootPointerPressed);
+                }
+            };
+            // Once in the visual tree, hook KeyDown on the XamlRoot content element.
+            // This receives ALL keystrokes in the window without depending on XAML focus.
+            // We gate on _hasFocus (set by our own pointer handlers) to act only when
+            // the user has clicked inside this control.
+            Loaded += (_, _) =>
+            {
+                _rootContent = XamlRoot?.Content as UIElement;
+                if (_rootContent != null)
+                {
+                    _rootContent.AddHandler(KeyDownEvent,       (KeyEventHandler)OnRootKeyDown,    true);
+                    _rootContent.AddHandler(PointerPressedEvent,(PointerEventHandler)OnRootPointerPressed, true);
+                    System.Diagnostics.Debug.WriteLine("[BHV] XamlRoot.Content hooked OK");
+                }
+                else
+                    System.Diagnostics.Debug.WriteLine("[BHV] WARNING: XamlRoot.Content not found");
+            };
         }
 
         /// <summary>
@@ -515,6 +543,9 @@ namespace BetterHexViewer.WinUI3
             _canvas.PointerPressed  += OnSbPointerPressed;
             _canvas.PointerMoved    += OnSbPointerMoved;
             _canvas.PointerReleased += OnSbPointerReleased;
+
+            GotFocus  += (_, _) => System.Diagnostics.Debug.WriteLine("[BHV] GotFocus");
+            LostFocus += (_, _) => System.Diagnostics.Debug.WriteLine("[BHV] LostFocus");
 
             ActualThemeChanged += (_, _) => { ApplyTheme(); _canvas.Invalidate(); };
 
@@ -600,9 +631,48 @@ namespace BetterHexViewer.WinUI3
         public void ScrollToOffset(long offset)
         {
             if (DataLength == 0 || _bytesPerLine == 0) return;
-            int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine   = Math.Clamp((int)(offset / _bytesPerLine), 0, maxTop);
+            long maxTop = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
+            _topLine    = Math.Clamp(offset / _bytesPerLine, 0L, maxTop);
             _canvas?.Invalidate();
+        }
+
+        /// <summary>
+        /// Programmatically selects <paramref name="length"/> bytes starting at
+        /// <paramref name="startOffset"/> and scrolls the view to show the selection.
+        /// </summary>
+        /// <param name="startOffset">Zero-based byte offset of the first selected byte.</param>
+        /// <param name="length">Number of bytes to select. Clamped to the available data.</param>
+        public void SelectRange(long startOffset, long length)
+        {
+            if (DataLength == 0) return;
+            startOffset = Math.Clamp(startOffset, 0, DataLength - 1);
+            length      = Math.Clamp(length, 1, DataLength - startOffset);
+            _selStart   = startOffset;
+            _selEnd     = startOffset + length - 1;
+            _caretByte  = _selEnd;
+            ScrollToOffset(startOffset);
+            ScheduleRender();
+            FireSelectionChanged();
+        }
+
+        /// <summary>
+        /// Programmatically selects bytes from <paramref name="startOffset"/> to
+        /// <paramref name="endOffset"/> (both inclusive) and scrolls the view to
+        /// show the start of the selection. The two offsets can be passed in any order.
+        /// </summary>
+        /// <param name="startOffset">Offset of one end of the selection.</param>
+        /// <param name="endOffset">Offset of the other end of the selection.</param>
+        public void SelectFromTo(long startOffset, long endOffset)
+        {
+            if (DataLength == 0) return;
+            long s = Math.Clamp(Math.Min(startOffset, endOffset), 0, DataLength - 1);
+            long e = Math.Clamp(Math.Max(startOffset, endOffset), 0, DataLength - 1);
+            _selStart  = s;
+            _selEnd    = e;
+            _caretByte = e;
+            ScrollToOffset(s);
+            ScheduleRender();
+            FireSelectionChanged();
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -720,7 +790,122 @@ namespace BetterHexViewer.WinUI3
                 : (IReadOnlyList<long>)results;
         }
 
-        // ── Core search engine (Boyer-Moore-Horspool) ─────────────────────
+        // ═══════════════════════════════════════════════════════════════════
+        //  KEYBOARD NAVIGATION
+        // ═══════════════════════════════════════════════════════════════════
+
+        private bool _hasFocus; // true after click inside this control, false after click elsewhere
+
+        /// <summary>
+        /// Hooked on XamlRoot.Content so it receives ALL keystrokes in the window.
+        /// Gated on <see cref="_hasFocus"/> which is managed by pointer events.
+        /// </summary>
+        private void OnRootKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (!_hasFocus || DataLength == 0) return;
+            System.Diagnostics.Debug.WriteLine($"[BHV] OnRootKeyDown key={e.Key}");
+
+            bool ctrl  = Microsoft.UI.Input.InputKeyboardSource
+                             .GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control)
+                             .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+            bool shift = Microsoft.UI.Input.InputKeyboardSource
+                             .GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift)
+                             .HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down);
+
+            if (_caretByte < 0) _caretByte = 0;
+            long next    = _caretByte;
+            bool handled = true;
+
+            switch (e.Key)
+            {
+                case Windows.System.VirtualKey.Right:
+                    next = ctrl
+                        ? Math.Min(DataLength - 1, next + _bytesPerLine - (next % _bytesPerLine))
+                        : Math.Min(DataLength - 1, next + 1);
+                    break;
+                case Windows.System.VirtualKey.Left:
+                    next = ctrl ? next - (next % _bytesPerLine) : Math.Max(0, next - 1);
+                    break;
+                case Windows.System.VirtualKey.Down:
+                    next = ctrl
+                        ? Math.Min(DataLength - 1, next + _sbVisibleLines * _bytesPerLine)
+                        : Math.Min(DataLength - 1, next + _bytesPerLine);
+                    break;
+                case Windows.System.VirtualKey.Up:
+                    next = ctrl
+                        ? Math.Max(0, next - _sbVisibleLines * _bytesPerLine)
+                        : Math.Max(0, next - _bytesPerLine);
+                    break;
+                case Windows.System.VirtualKey.Home:
+                    next = ctrl ? 0 : next - (next % _bytesPerLine);
+                    break;
+                case Windows.System.VirtualKey.End:
+                    next = ctrl
+                        ? DataLength - 1
+                        : Math.Min(DataLength - 1, next - (next % _bytesPerLine) + _bytesPerLine - 1);
+                    break;
+                case Windows.System.VirtualKey.PageDown:
+                    next = Math.Min(DataLength - 1, next + _sbVisibleLines * _bytesPerLine);
+                    break;
+                case Windows.System.VirtualKey.PageUp:
+                    next = Math.Max(0, next - _sbVisibleLines * _bytesPerLine);
+                    break;
+                case Windows.System.VirtualKey.A when ctrl:
+                    _selStart = 0; _selEnd = DataLength - 1; _caretByte = _selEnd;
+                    EnsureCaretVisible();
+                    ScheduleRender(); FireSelectionChanged();
+                    e.Handled = true;
+                    return;
+                default:
+                    handled = false;
+                    break;
+            }
+
+            if (!handled) return;
+
+            if (shift)
+            {
+                if (!HasSelection()) _selStart = _caretByte;
+                _selEnd = next; _caretByte = next;
+            }
+            else
+            {
+                _selStart = next; _selEnd = next; _caretByte = next;
+            }
+
+            EnsureCaretVisible();
+            ScheduleRender();
+            FireSelectionChanged();
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Clears <see cref="_hasFocus"/> when the user clicks anywhere outside
+        /// this control, so keyboard events are no longer intercepted.
+        /// </summary>
+        private void OnRootPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            // Check if the press landed inside our canvas bounds.
+            var pt = e.GetCurrentPoint(_canvas);
+            bool inside = pt.Position.X >= 0 && pt.Position.X <= _canvas.ActualWidth &&
+                          pt.Position.Y >= 0 && pt.Position.Y <= _canvas.ActualHeight;
+            if (!inside)
+            {
+                _hasFocus = false;
+                System.Diagnostics.Debug.WriteLine("[BHV] OnRootPointerPressed outside → _hasFocus=false");
+            }
+        }
+
+        /// <summary>Scrolls the view so that <see cref="_caretByte"/> is visible.</summary>
+        private void EnsureCaretVisible()
+        {
+            if (_bytesPerLine == 0) return;
+            long caretRow = _caretByte / _bytesPerLine;
+            if (caretRow < _topLine)
+                _topLine = caretRow;
+            else if (caretRow >= _topLine + _sbVisibleLines)
+                _topLine = caretRow - _sbVisibleLines + 1;
+        }
         private async Task<HexSearchResult> SearchCoreAsync(
             byte[] pattern, bool forward, bool fromAfterLast = false)
         {
@@ -913,6 +1098,9 @@ namespace BetterHexViewer.WinUI3
             if (cp.Properties.IsRightButtonPressed) return;
             if (IsInSbColumn(cp.Position.X)) return;
 
+            Focus(FocusState.Pointer);
+            _hasFocus = true;
+            System.Diagnostics.Debug.WriteLine("[BHV] OnPointerPressed → Focus(Pointer) called");
             HideTooltip();
             _canvas.CapturePointer(e.Pointer);
             _mouseDown = true;
@@ -931,15 +1119,15 @@ namespace BetterHexViewer.WinUI3
             double contentTop    = _cachedDividerY;
             double contentBottom = _canvas?.ActualHeight ?? 0;
             double rowH          = _lineHeight + ExtraLineGap;
-            int    maxTop        = Math.Max(0, _sbTotalLines - _sbVisibleLines);
+            long   maxTop        = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
 
             if (pt.Y < contentTop && _topLine > 0)
             {
                 // Pointer above content area — scroll up proportionally
                 int lines = Math.Max(1, (int)((contentTop - pt.Y) / rowH));
-                _topLine  = Math.Max(0, _topLine - lines);
+                _topLine  = Math.Max(0L, _topLine - lines);
                 // Extend selection to first byte of new top line
-                long firstVisible = (long)_topLine * _bytesPerLine;
+                long firstVisible = _topLine * _bytesPerLine;
                 _selEnd = Math.Max(0, firstVisible);
                 _caretByte = _selEnd;
                 ScheduleRender(); FireSelectionChanged();
@@ -953,7 +1141,7 @@ namespace BetterHexViewer.WinUI3
                 _topLine  = Math.Min(maxTop, _topLine + lines);
                 // Extend selection to last byte of last visible line
                 long lastVisible = Math.Min(DataLength - 1,
-                    (long)(_topLine + _sbVisibleLines) * _bytesPerLine - 1);
+                    (_topLine + _sbVisibleLines) * _bytesPerLine - 1);
                 _selEnd = lastVisible;
                 _caretByte = _selEnd;
                 ScheduleRender(); FireSelectionChanged();
@@ -1065,8 +1253,8 @@ namespace BetterHexViewer.WinUI3
             _wheelAccum -= whole;
             if (whole != 0)
             {
-                int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-                _topLine   = Math.Clamp(_topLine + whole, 0, maxTop);
+                long maxTop = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
+                _topLine    = Math.Clamp(_topLine + whole, 0L, maxTop);
                 ScheduleRender();
             }
             e.Handled = true;
@@ -1106,8 +1294,8 @@ namespace BetterHexViewer.WinUI3
                 double trackTop = _sbBtnUpBottom;
                 double trackH   = Math.Max(1, _sbBtnDnTop - trackTop);
                 double relY     = Math.Max(0, pt.Y - trackTop);
-                int    maxTop   = _sbTotalLines - _sbVisibleLines;
-                _topLine        = Math.Clamp((int)(relY / trackH * _sbTotalLines), 0, maxTop);
+                long   maxTop   = _sbTotalLines - _sbVisibleLines;
+                _topLine        = Math.Clamp((long)(relY / trackH * _sbTotalLines), 0L, maxTop);
                 _sbDragging     = true;
                 _sbDragStartY   = pt.Y;
                 _sbDragStartTop = _topLine;
@@ -1122,8 +1310,8 @@ namespace BetterHexViewer.WinUI3
             var    pt     = e.GetCurrentPoint(_canvas).Position;
             double trackH = Math.Max(1, _sbBtnDnTop - _sbBtnUpBottom);
             double dy     = pt.Y - _sbDragStartY;
-            int    maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine      = Math.Clamp(_sbDragStartTop + (int)(dy * _sbTotalLines / trackH), 0, maxTop);
+            long   maxTop = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
+            _topLine      = Math.Clamp(_sbDragStartTop + (long)(dy * _sbTotalLines / trackH), 0L, maxTop);
             ScheduleRender();
             e.Handled = true;
         }
@@ -1139,8 +1327,8 @@ namespace BetterHexViewer.WinUI3
         private void SbRepeatScroll()
         {
             if (_sbRepeatDir == 0) return;
-            int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
-            _topLine   = Math.Clamp(_topLine + _sbRepeatDir * _sbVisibleLines, 0, maxTop);
+            long maxTop = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
+            _topLine    = Math.Clamp(_topLine + _sbRepeatDir * _sbVisibleLines, 0L, maxTop);
             ScheduleRender();
         }
 
@@ -1179,9 +1367,39 @@ namespace BetterHexViewer.WinUI3
 
         private void MeasureFont()
         {
-            double fs   = FontSize > 0 ? FontSize : 13;
+            double fs  = FontSize > 0 ? FontSize : 13;
+            // Estimate first so UpdateBytesPerLine has a valid value even before
+            // the canvas device is ready.
             _charWidth  = fs * 0.601;
             _lineHeight = fs * 1.35;
+
+            if (_canvas == null) return;
+            try
+            {
+                var device = CanvasDevice.GetSharedDevice();
+                // Use the format that will actually be used for rendering.
+                // InvalidateTxFormats first so GetFmt picks up any new family.
+                InvalidateTxFormats();
+                using var fmt = new CanvasTextFormat
+                {
+                    FontFamily   = GetFmt(false).FontFamily,
+                    FontSize     = (float)fs,
+                    WordWrapping = CanvasWordWrapping.NoWrap
+                };
+                // Measure a representative monospaced string: "WW" gives a stable
+                // average even if the font has slight per-glyph width variance.
+                using var layout = new CanvasTextLayout(device, "WW", fmt, 4096f, 4096f);
+                double measured = layout.LayoutBounds.Width / 2.0;
+                if (measured > 0) _charWidth = measured;
+
+                // Line height: use the font's own ascent+descent+line gap
+                double lineH = layout.LayoutBounds.Height;
+                if (lineH > 0) _lineHeight = lineH;
+            }
+            catch
+            {
+                // Canvas device not yet available — fallback stays in place
+            }
         }
 
         private double OffsetColumnWidth() => 15 * _charWidth;
@@ -1233,10 +1451,10 @@ namespace BetterHexViewer.WinUI3
         private void UpdateScrollBar()
         {
             _sbTotalLines   = DataLength == 0 || _bytesPerLine == 0
-                              ? 0
-                              : (int)((DataLength + _bytesPerLine - 1) / _bytesPerLine);
-            _sbVisibleLines = Math.Max(1, VisibleLineCount());
-            int maxTop      = Math.Max(0, _sbTotalLines - _sbVisibleLines);
+                              ? 0L
+                              : (DataLength + _bytesPerLine - 1) / _bytesPerLine;
+            _sbVisibleLines = Math.Max(1L, (long)VisibleLineCount());
+            long maxTop     = Math.Max(0L, _sbTotalLines - _sbVisibleLines);
             if (_topLine > maxTop) _topLine = maxTop;
         }
 
@@ -1258,7 +1476,7 @@ namespace BetterHexViewer.WinUI3
             double dy = y - _cachedDividerY;
             if (dy < 0) return -1;
 
-            int  row     = (int)(dy / (_lineHeight + ExtraLineGap)) + _topLine;
+            long row     = (long)(dy / (_lineHeight + ExtraLineGap)) + _topLine;
             long baseIdx = (long)row * _bytesPerLine;
             if (baseIdx < 0 || baseIdx >= DataLength) return -1;
 
@@ -1394,7 +1612,7 @@ namespace BetterHexViewer.WinUI3
         /// </summary>
         private (double x, double y, double w, double h) HexCellRect(long byteIdx, double dividerY, double rowH)
         {
-            int row = (int)(byteIdx / _bytesPerLine) - _topLine;
+            long row = byteIdx / _bytesPerLine - _topLine;
             int col = (int)(byteIdx % _bytesPerLine);
             int g   = (int)ColumnGroupSize;
             double y = dividerY + row * rowH;
@@ -1408,7 +1626,7 @@ namespace BetterHexViewer.WinUI3
         /// </summary>
         private (double x, double y, double w, double h) AsciiCellRect(long byteIdx, double dividerY, double rowH)
         {
-            int    row          = (int)(byteIdx / _bytesPerLine) - _topLine;
+            long   row          = byteIdx / _bytesPerLine - _topLine;
             int    col          = (int)(byteIdx % _bytesPerLine);
             double asciiSpacing = _charWidth / 2;
             double y = dividerY + row * rowH;
@@ -1505,7 +1723,7 @@ namespace BetterHexViewer.WinUI3
 
                 for (int line = 0; line < vl; line++)
                 {
-                    int  row    = _topLine + line;
+                    long row    = _topLine + line;
                     long offset = (long)row * _bytesPerLine;
                     if (offset >= DataLength) break;
 
@@ -1613,7 +1831,7 @@ namespace BetterHexViewer.WinUI3
 
             for (int line = 0; line < vLines; line++)
             {
-                int  row     = _topLine + line;
+                long row     = _topLine + line;
                 long offset2 = (long)row * _bytesPerLine;
                 if (offset2 >= DataLength) break;
 
@@ -1707,7 +1925,7 @@ namespace BetterHexViewer.WinUI3
             if (canScr && trackH > 0)
             {
                 double thumbH = Math.Max(20, trackH * _sbVisibleLines / (double)_sbTotalLines);
-                int    maxTop = _sbTotalLines - _sbVisibleLines;
+                long   maxTop = _sbTotalLines - _sbVisibleLines;
                 double thumbY = trackTop + (trackH - thumbH) * _topLine / (double)maxTop;
                 _sbThumbTop   = thumbY;
                 _sbThumbBot   = thumbY + thumbH;

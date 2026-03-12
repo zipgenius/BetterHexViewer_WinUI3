@@ -5,6 +5,39 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.4] – 2026-03-12
+
+### Added
+- **Keyboard navigation** — arrow keys (with Ctrl modifier for line start/end
+  and page jumps), Home/End, PgUp/PgDn, Shift to extend selection, Ctrl+A to
+  select all. Input is received via `XamlRoot.Content.AddHandler` so it works
+  regardless of WinUI 3 internal focus routing.
+- **`SelectRange(long offset, long length)`** — programmatically selects a range
+  of bytes and scrolls to the start of the selection.
+- **`SelectFromTo(long start, long end)`** — selects bytes between two offsets
+  (both inclusive, any order); complements `SelectRange`.
+
+### Fixed
+- **Large-file scroll beyond 2 GB** — scroll fields `_topLine`, `_sbTotalLines`,
+  `_sbVisibleLines`, and `_sbDragStartTop` changed from `int` to `long`; tested
+  with an 84 GB file (offset `1507F69DF0`).
+- **Font rendering** — `MeasureFont()` now measures actual glyph width via
+  `CanvasTextLayout` instead of using the fixed `fs * 0.601` formula, so fonts
+  with non-standard proportions (e.g. Cascadia Mono, Lucida Console) lay out
+  correctly.
+- **Demo font picker** — `PopulateMonoFonts()` now uses
+  `CanvasFontSet.GetSystemFontSet()` to exclude font families not supported by
+  DirectWrite (raster-only fonts such as Fixedsys and Terminal are filtered out).
+
+### Changed
+- **App icon** — Demo and NuGet package now use the new icon supplied by the
+  author (blue rounded-square with "0x" glyph). The `Win32Resource` / `.res`
+  approach has been removed; the Demo csproj uses `ApplicationIcon` pointing
+  to `Graphics/icon.png`, which the Windows App SDK build toolchain handles
+  natively.
+
+---
+
 ## [1.1.3] – 2026-03-12
 
 ### Added

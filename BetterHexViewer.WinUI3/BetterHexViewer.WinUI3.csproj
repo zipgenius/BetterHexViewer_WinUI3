@@ -13,17 +13,19 @@
 
     <!-- NuGet metadata -->
     <PackageId>BetterHexViewer.WinUI3</PackageId>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Authors>zipgenius.it</Authors>
     <Company>zipgenius.it</Company>
     <Product>BetterHexViewer WinUI 3</Product>
     <Description>
       A feature-rich WinUI 3 hex-viewer control for Windows App SDK.
-      GPU-accelerated via Win2D CanvasControl. Supports large-file streaming,
-      mouse selection, context-menu copy (hex/ASCII), configurable offset
-      formats (hex/dec/oct), column grouping, full-width auto-fit, customisable
-      colours, ASCII encoding selection (IBM437, UTF-8, CP1252, …), hover
-      cross-highlight, and SelectionChanged events.
+      GPU-accelerated via Win2D CanvasControl. Supports large-file streaming
+      via MemoryMappedFile (any size), mouse and keyboard selection, context-menu
+      copy (hex/ASCII), text and byte-sequence search (FindAllAsync), programmatic
+      selection (SelectRange / SelectFromTo), configurable offset formats
+      (hex/dec/oct), column grouping, full-width auto-fit, customisable colours,
+      ASCII encoding selection (IBM437, UTF-8, CP1252, …), hover cross-highlight,
+      SelectionChanged events, and scroll support for files larger than 2 GB.
     </Description>
     <PackageTags>winui3;winui;hex;viewer;hexeditor;control;win2d;zipgenius</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

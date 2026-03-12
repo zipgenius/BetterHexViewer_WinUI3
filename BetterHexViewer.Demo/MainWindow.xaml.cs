@@ -119,24 +119,32 @@ namespace BetterHexViewer.Demo
 
         private void PopulateMonoFonts()
         {
-            // Use Win2D to verify which fonts actually exist on this system.
+            // Use CanvasFontSet.GetSystemFontSet() to enumerate fonts actually
+            // present and supported by DirectWrite on this machine.
+            // Raster-only fonts (Fixedsys, Terminal…) are absent from the
+            // DirectWrite font set and will therefore be excluded automatically.
+            var systemFonts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                using var fontSet = Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetSystemFontSet();
+                for (int i = 0; i < fontSet.Fonts.Count; i++)
+                {
+                    var props = fontSet.Fonts[i];
+                    // FamilyName is in the font's own locale; also try "en-us"
+                    if (props.FamilyNames.TryGetValue("en-us", out string? name) && name != null)
+                        systemFonts.Add(name);
+                    else if (props.FamilyNames.Count > 0)
+                        systemFonts.Add(props.FamilyNames.First().Value);
+                }
+            }
+            catch { /* fallback: include everything */ }
+
             var available = new List<string>();
             foreach (var name in KnownMonoFonts)
             {
-                try
-                {
-                    using var fmt = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
-                    {
-                        FontFamily = name,
-                        FontSize   = 13
-                    };
-                    // Create a tiny layout to force font resolution.
-                    // If the font doesn't exist Win2D silently falls back;
-                    // we can't distinguish easily, so we just include all
-                    // known names and mark the current one as selected.
+                // If we got a valid font set, require the family to be present in it.
+                if (systemFonts.Count == 0 || systemFonts.Contains(name))
                     available.Add(name);
-                }
-                catch { /* skip */ }
             }
 
             // Always include "Courier New" as absolute fallback
@@ -150,6 +158,24 @@ namespace BetterHexViewer.Demo
             string first   = current.Contains(',') ? current.Split(',')[0].Trim() : current;
             int idx = available.IndexOf(first);
             CmbFont.SelectedIndex = idx >= 0 ? idx : available.IndexOf("Courier New");
+        }
+
+        /// <summary>
+        /// Measures the rendered width of a single "W" glyph for the given font.
+        /// Used to detect silent DirectWrite fallback substitutions.
+        /// </summary>
+        private static double MeasureFontWidth(
+            Microsoft.Graphics.Canvas.CanvasDevice device, string fontName, float fontSize)
+        {
+            using var fmt = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
+            {
+                FontFamily   = fontName,
+                FontSize     = fontSize,
+                WordWrapping = Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.NoWrap
+            };
+            using var layout = new Microsoft.Graphics.Canvas.Text.CanvasTextLayout(
+                device, "W", fmt, 4096f, 4096f);
+            return layout.LayoutBounds.Width;
         }
 
         private void CmbFont_SelectionChanged(object sender, SelectionChangedEventArgs e)
