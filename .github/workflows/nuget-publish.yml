@@ -1,0 +1,38 @@
+name: Build & Publish NuGet
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'          # triggers on tags like v1.1.2, v2.0.0
+  workflow_dispatch:       # allows manual trigger from GitHub UI
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj
+
+      - name: Build
+        run: dotnet build src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-restore
+
+      - name: Pack
+        run: dotnet pack src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-build --output ./nupkg
+
+      - name: List nupkg folder
+        run: dir ./nupkg
+
+      - name: Publish to NuGet.org
+        run: |
+          $pkg = Get-ChildItem ./nupkg/*.nupkg | Select-Object -First 1
+          dotnet nuget push $pkg.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        shell: pwsh

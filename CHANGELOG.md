@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.2] – 2026-03-11
+
+### Changed
+- **Target framework upgraded to .NET 10** (`net10.0-windows10.0.19041.0`) for
+  both the library and the Demo app; CI workflow updated accordingly.
+- **App icon replaced** — the Demo now uses the definitive icon supplied by the
+  author. All 9 frames (16/20/24/32/40/48/64/128/256 px) are embedded as Win32
+  resources in `app_icon.res` so Windows uses the correct pre-rendered frame
+  for the taskbar and Explorer without downscaling.
+
+---
+
 ## [1.1.1] – 2026-03-11
 
 ### Added
