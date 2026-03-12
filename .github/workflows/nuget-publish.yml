@@ -43,7 +43,12 @@ jobs:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
       - name: Publish to NuGet.org
-        run: dotnet nuget push "./nupkg/*.nupkg" --api-key "$env:NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: |
+          $files = Get-ChildItem -Path ".\nupkg\*.nupkg" -Exclude "*.symbols.nupkg"
+          foreach ($f in $files) {
+            Write-Host "Pushing $($f.FullName)"
+            dotnet nuget push $f.FullName --api-key "$env:NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
         shell: pwsh
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
