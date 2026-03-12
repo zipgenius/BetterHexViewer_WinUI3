@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.4
+// Version: 1.1.5
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;

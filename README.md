@@ -1,10 +1,10 @@
 # BetterHexViewer.WinUI3
 
-![BetterHexViewer icon](https://raw.githubusercontent.com/zipgenius/BetterHexViewer.WinUI3/main/Graphics/icon.png)
+![BetterHexViewer icon](https://raw.githubusercontent.com/zipgenius/BetterHexViewer_WinUI3/main/Graphics/icon.png)
 
 [![NuGet](https://img.shields.io/nuget/v/BetterHexViewer.WinUI3?logo=nuget)](https://www.nuget.org/packages/BetterHexViewer.WinUI3)
-[![Build](https://github.com/zipgenius/BetterHexViewer.WinUI3/actions/workflows/nuget-publish.yml/badge.svg)](https://github.com/zipgenius/BetterHexViewer.WinUI3/actions/workflows/nuget-publish.yml)
-[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/zipgenius/BetterHexViewer.WinUI3/blob/main/LICENSE)
+[![Build](https://github.com/zipgenius/BetterHexViewer_WinUI3/actions/workflows/nuget-publish.yml/badge.svg)](https://github.com/zipgenius/BetterHexViewer_WinUI3/actions/workflows/nuget-publish.yml)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/zipgenius/BetterHexViewer_WinUI3/blob/main/LICENSE)
 
 **BetterHexViewer.WinUI3** is a feature-rich, fully customisable hex-viewer control for Windows App SDK / WinUI 3 applications.
 All rendering is GPU-accelerated via **Win2D** (`CanvasControl`) — a single `DrawingSession` replaces thousands of XAML elements, delivering smooth scrolling even on 4K displays with files of any size.
@@ -224,7 +224,7 @@ public enum ColumnGroupSize { One = 1, Two = 2, Four = 4, Eight = 8, Sixteen = 1
 ## Building from source
 
 ```shell
-git clone https://github.com/zipgenius/BetterHexViewer.WinUI3.git
+git clone https://github.com/zipgenius/BetterHexViewer_WinUI3.git
 cd BetterHexViewer.WinUI3
 dotnet restore
 dotnet build -c Release -p:Platform=x64
@@ -246,10 +246,10 @@ dotnet pack BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj -c Release -p:P
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/zipgenius/BetterHexViewer.WinUI3/blob/main/CHANGELOG.md).
+See [CHANGELOG.md](https://github.com/zipgenius/BetterHexViewer_WinUI3/blob/main/CHANGELOG.md).
 
 ---
 
 ## License
 
-MIT © zipgenius.it — see [LICENSE](https://github.com/zipgenius/BetterHexViewer.WinUI3/blob/main/LICENSE).
+MIT © zipgenius.it — see [LICENSE](https://github.com/zipgenius/BetterHexViewer_WinUI3/blob/main/LICENSE).

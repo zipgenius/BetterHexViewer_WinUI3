@@ -5,7 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [1.1.4] – 2026-03-12
+## [1.1.5] – 2026-03-12
 
 ### Added
 - **Keyboard navigation** — arrow keys (with Ctrl modifier for line start/end
