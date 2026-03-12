@@ -34,5 +34,5 @@ jobs:
       - name: Publish to NuGet.org
         run: |
           $pkg = Get-ChildItem ./nupkg/*.nupkg | Select-Object -First 1
-          dotnet nuget push $pkg.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "$($pkg.FullName)" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         shell: pwsh
