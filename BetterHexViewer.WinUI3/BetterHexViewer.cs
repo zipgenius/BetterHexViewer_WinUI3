@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.2
+// Version: 1.1.3
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -652,6 +652,74 @@ namespace BetterHexViewer.WinUI3
             _lastMatchOffset = -1;
         }
 
+        /// <summary>
+        /// Returns the byte offsets of every occurrence of <paramref name="pattern"/>
+        /// in the loaded data. The search runs on a background thread and can be
+        /// cancelled by loading new data or calling <see cref="Clear"/>.
+        /// Returns an empty list when no data is loaded or the pattern is empty.
+        /// </summary>
+        public Task<IReadOnlyList<long>> FindAllAsync(byte[] pattern)
+            => FindAllCoreAsync(pattern);
+
+        /// <summary>
+        /// Converts <paramref name="text"/> to bytes using
+        /// <paramref name="encoding"/> (or <see cref="AsciiEncoding"/> when null)
+        /// and returns the offset of every occurrence in the loaded data.
+        /// </summary>
+        public Task<IReadOnlyList<long>> FindAllAsync(string text, Encoding? encoding = null)
+        {
+            var enc     = encoding ?? _asciiEncoding;
+            var pattern = enc.GetBytes(text);
+            return FindAllCoreAsync(pattern);
+        }
+
+        private async Task<IReadOnlyList<long>> FindAllCoreAsync(byte[] pattern)
+        {
+            if (DataLength == 0 || pattern.Length == 0)
+                return Array.Empty<long>();
+
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var ct = _searchCts.Token;
+
+            _lastPattern = pattern;
+
+            var results = await Task.Run(() =>
+            {
+                var list = new List<long>();
+                int  m    = pattern.Length;
+                long n    = DataLength;
+                if (m > n) return list;
+
+                // BMH skip table
+                var skip = new int[256];
+                for (int i = 0; i < 256; i++) skip[i] = m;
+                for (int i = 0; i < m - 1; i++) skip[pattern[i]] = m - 1 - i;
+
+                long pos = 0;
+                while (pos <= n - m)
+                {
+                    if (ct.IsCancellationRequested) return list;
+                    int j = m - 1;
+                    while (j >= 0 && pattern[j] == ByteAt(pos + j)) j--;
+                    if (j < 0)
+                    {
+                        list.Add(pos);
+                        pos += m;   // non-overlapping matches
+                    }
+                    else
+                    {
+                        pos += skip[ByteAt(pos + m - 1)];
+                    }
+                }
+                return list;
+            }, ct).ConfigureAwait(false);
+
+            return ct.IsCancellationRequested
+                ? Array.Empty<long>()
+                : (IReadOnlyList<long>)results;
+        }
+
         // ── Core search engine (Boyer-Moore-Horspool) ─────────────────────
         private async Task<HexSearchResult> SearchCoreAsync(
             byte[] pattern, bool forward, bool fromAfterLast = false)
@@ -845,6 +913,7 @@ namespace BetterHexViewer.WinUI3
             if (cp.Properties.IsRightButtonPressed) return;
             if (IsInSbColumn(cp.Position.X)) return;
 
+            HideTooltip();
             _canvas.CapturePointer(e.Pointer);
             _mouseDown = true;
             long idx = HitTest(cp.Position.X, cp.Position.Y);

@@ -157,6 +157,13 @@
                                 ToolTipService.ToolTip="Find next occurrence"/>
                     </Grid>
 
+                    <Button x:Name="BtnFindAll"
+                            Content="≡  Find all"
+                            HorizontalAlignment="Stretch"
+                            Margin="8,4,8,0"
+                            Click="BtnFindAll_Click"
+                            ToolTipService.ToolTip="List all occurrences"/>
+
                     <!-- ── Font ── -->
                     <TextBlock Text="FONT"
                                Style="{StaticResource CaptionTextBlockStyle}"

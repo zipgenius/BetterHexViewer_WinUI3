@@ -5,7 +5,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [1.1.2] – 2026-03-11
+## [1.1.3] – 2026-03-12
+
+### Added
+- **`FindAllAsync(byte[])`** / **`FindAllAsync(string, Encoding?)`** — returns
+  `IReadOnlyList<long>` with the byte offset of every non-overlapping occurrence
+  of the pattern in the loaded data. Runs on a background thread via
+  Boyer-Moore-Horspool; cancelled automatically when new data is loaded.
+  Demo shows results in a scrollable `ContentDialog` (up to 1 000 rows displayed,
+  total count always exact).
+
+### Fixed
+- Tooltip on hex bytes / ASCII characters now hides immediately when a mouse
+  click begins a selection (`HideTooltip()` added to `OnPointerPressed`).
+
+---
+
+
 
 ### Changed
 - **Target framework upgraded to .NET 10** (`net10.0-windows10.0.19041.0`) for
