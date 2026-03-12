@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.1
+// Version: 1.1.2
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -21,6 +21,7 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -31,6 +32,25 @@ namespace BetterHexViewer.WinUI3
 {
     public enum OffsetFormat    { Hexadecimal, Decimal, Octal }
     public enum ColumnGroupSize { One = 1, Two = 2, Four = 4, Eight = 8, Sixteen = 16 }
+
+    /// <summary>Result of a search operation.</summary>
+    public sealed class HexSearchResult : EventArgs
+    {
+        /// <summary>True when a match was found.</summary>
+        public bool Found        { get; }
+        /// <summary>Byte offset of the match start, or -1 when not found.</summary>
+        public long Offset       { get; }
+        /// <summary>Length of the match in bytes.</summary>
+        public long Length       { get; }
+        /// <summary>True when the search wrapped around the end/start of the data.</summary>
+        public bool Wrapped      { get; }
+
+        internal HexSearchResult(bool found, long offset, long length, bool wrapped)
+        { Found = found; Offset = offset; Length = length; Wrapped = wrapped; }
+
+        internal static readonly HexSearchResult NotFound =
+            new HexSearchResult(false, -1, 0, false);
+    }
 
     /// <summary>
     /// Describes the current selection state of a <see cref="BetterHexViewer"/>.
@@ -438,6 +458,17 @@ namespace BetterHexViewer.WinUI3
 
         public event EventHandler<HexSelectionChangedEventArgs>? SelectionChanged;
 
+        // ── Search state ─────────────────────────────────────────────────
+        private byte[]?            _lastPattern;       // last searched byte pattern
+        private long               _lastMatchOffset = -1;
+        private CancellationTokenSource? _searchCts;
+
+        /// <summary>
+        /// Raised when a search finds a match. Contains the match offset and length.
+        /// When no match is found the event is raised with <see cref="HexSearchResult.Found"/> = false.
+        /// </summary>
+        public event EventHandler<HexSearchResult>? SearchResultFound;
+
         // ═══════════════════════════════════════════════════════════════════
         //  CONSTRUCTOR
         // ═══════════════════════════════════════════════════════════════════
@@ -572,6 +603,189 @@ namespace BetterHexViewer.WinUI3
             int maxTop = Math.Max(0, _sbTotalLines - _sbVisibleLines);
             _topLine   = Math.Clamp((int)(offset / _bytesPerLine), 0, maxTop);
             _canvas?.Invalidate();
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        //  SEARCH
+        // ═══════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Searches forward for <paramref name="pattern"/> starting after the
+        /// current selection (or from the beginning when nothing is selected).
+        /// Wraps around when reaching end of data.
+        /// </summary>
+        public Task<HexSearchResult> SearchAsync(byte[] pattern)
+            => SearchCoreAsync(pattern, forward: true);
+
+        /// <summary>
+        /// Converts <paramref name="text"/> to bytes using
+        /// <paramref name="encoding"/> (or <see cref="AsciiEncoding"/> when null)
+        /// and searches forward. Wraps around when reaching end of data.
+        /// </summary>
+        public Task<HexSearchResult> SearchAsync(string text, Encoding? encoding = null)
+        {
+            var enc     = encoding ?? _asciiEncoding;
+            var pattern = enc.GetBytes(text);
+            return SearchCoreAsync(pattern, forward: true);
+        }
+
+        /// <summary>Repeats the last search forward.</summary>
+        public Task<HexSearchResult> SearchNextAsync()
+        {
+            if (_lastPattern == null || _lastPattern.Length == 0)
+                return Task.FromResult(HexSearchResult.NotFound);
+            return SearchCoreAsync(_lastPattern, forward: true, fromAfterLast: true);
+        }
+
+        /// <summary>Repeats the last search backward.</summary>
+        public Task<HexSearchResult> SearchPreviousAsync()
+        {
+            if (_lastPattern == null || _lastPattern.Length == 0)
+                return Task.FromResult(HexSearchResult.NotFound);
+            return SearchCoreAsync(_lastPattern, forward: false, fromAfterLast: true);
+        }
+
+        /// <summary>Clears the stored search pattern and search highlight.</summary>
+        public void ClearSearch()
+        {
+            _lastPattern     = null;
+            _lastMatchOffset = -1;
+        }
+
+        // ── Core search engine (Boyer-Moore-Horspool) ─────────────────────
+        private async Task<HexSearchResult> SearchCoreAsync(
+            byte[] pattern, bool forward, bool fromAfterLast = false)
+        {
+            if (DataLength == 0 || pattern.Length == 0)
+                return HexSearchResult.NotFound;
+
+            // Cancel any in-flight search
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var ct = _searchCts.Token;
+
+            _lastPattern = pattern;
+
+            // Determine start position
+            long startPos;
+            if (forward)
+            {
+                if (fromAfterLast && _lastMatchOffset >= 0)
+                    startPos = _lastMatchOffset + 1;
+                else if (_selEnd >= 0)
+                    startPos = Math.Max(_selStart, _selEnd) + 1;
+                else
+                    startPos = 0;
+                if (startPos >= DataLength) startPos = 0;
+            }
+            else
+            {
+                if (fromAfterLast && _lastMatchOffset >= 0)
+                    startPos = _lastMatchOffset - 1;
+                else if (_selStart >= 0)
+                    startPos = Math.Min(_selStart, _selEnd) - 1;
+                else
+                    startPos = DataLength - 1;
+                if (startPos < 0) startPos = DataLength - 1;
+            }
+
+            long matchOffset = await Task.Run(() =>
+                forward
+                    ? BmhForward(pattern, startPos, ct)
+                    : BmhBackward(pattern, startPos, ct),
+                ct).ConfigureAwait(false);
+
+            if (ct.IsCancellationRequested) return HexSearchResult.NotFound;
+
+            bool wrapped = false;
+
+            // Wrap-around
+            if (matchOffset < 0)
+            {
+                wrapped = true;
+                matchOffset = await Task.Run(() =>
+                    forward
+                        ? BmhForward(pattern, 0, ct)
+                        : BmhBackward(pattern, DataLength - 1, ct),
+                    ct).ConfigureAwait(false);
+            }
+
+            if (ct.IsCancellationRequested) return HexSearchResult.NotFound;
+
+            HexSearchResult result;
+            if (matchOffset < 0)
+            {
+                result = HexSearchResult.NotFound;
+            }
+            else
+            {
+                _lastMatchOffset = matchOffset;
+                result = new HexSearchResult(true, matchOffset, pattern.Length, wrapped);
+
+                // Select the match and scroll into view on the UI thread
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    _selStart  = matchOffset;
+                    _selEnd    = matchOffset + pattern.Length - 1;
+                    _caretByte = _selEnd;
+                    ScrollToOffset(matchOffset);
+                    ScheduleRender();
+                    FireSelectionChanged();
+                });
+            }
+
+            // Raise event on UI thread
+            DispatcherQueue.TryEnqueue(() => SearchResultFound?.Invoke(this, result));
+
+            return result;
+        }
+
+        // ── Boyer-Moore-Horspool forward ──────────────────────────────────
+        private long BmhForward(byte[] pat, long start, CancellationToken ct)
+        {
+            int  m   = pat.Length;
+            long n   = DataLength;
+            if (m > n) return -1;
+
+            // Bad-character skip table
+            var skip = new int[256];
+            for (int i = 0; i < 256; i++) skip[i] = m;
+            for (int i = 0; i < m - 1; i++) skip[pat[i]] = m - 1 - i;
+
+            long i2 = start;
+            while (i2 <= n - m)
+            {
+                if (ct.IsCancellationRequested) return -1;
+                int j = m - 1;
+                while (j >= 0 && pat[j] == ByteAt(i2 + j)) j--;
+                if (j < 0) return i2;
+                i2 += skip[ByteAt(i2 + m - 1)];
+            }
+            return -1;
+        }
+
+        // ── Boyer-Moore-Horspool backward ─────────────────────────────────
+        private long BmhBackward(byte[] pat, long start, CancellationToken ct)
+        {
+            int  m = pat.Length;
+            long n = DataLength;
+            if (m > n) return -1;
+
+            // Bad-character skip table (reversed pattern)
+            var skip = new int[256];
+            for (int i = 0; i < 256; i++) skip[i] = m;
+            for (int i = m - 1; i > 0; i--) skip[pat[i]] = i;
+
+            long i2 = Math.Min(start, n - m);
+            while (i2 >= 0)
+            {
+                if (ct.IsCancellationRequested) return -1;
+                int j = 0;
+                while (j < m && pat[j] == ByteAt(i2 + j)) j++;
+                if (j == m) return i2;
+                i2 -= skip[ByteAt(i2)];
+            }
+            return -1;
         }
 
         // ═══════════════════════════════════════════════════════════════════

@@ -501,7 +501,73 @@ namespace BetterHexViewer.Demo
             return result == ContentDialogResult.Primary ? picker.Color : null;
         }
 
-        // ─── Selection event ──────────────────────────────────────────────
+        // ─── Search ───────────────────────────────────────────────────────
+
+        private void RbSearchMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (TxtSearchHint == null) return;
+            TxtSearchHint.Visibility = (RbSearchHex?.IsChecked == true)
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async void TxtSearch_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+                await RunSearch(forward: true);
+        }
+
+        private async void BtnSearchNext_Click(object sender, RoutedEventArgs e)
+            => await RunSearch(forward: true);
+
+        private async void BtnSearchPrev_Click(object sender, RoutedEventArgs e)
+            => await RunSearch(forward: false);
+
+        private async System.Threading.Tasks.Task RunSearch(bool forward)
+        {
+            if (HexViewer.FileSize == 0 && HexViewer.BytesPerLine == 0) return;
+            var query = TxtSearch?.Text?.Trim();
+            if (string.IsNullOrEmpty(query)) return;
+
+            TxtSearchResult.Text = "Searching…";
+
+            HexSearchResult result;
+
+            if (RbSearchHex?.IsChecked == true)
+            {
+                // Parse hex string: accept "4D 5A", "4D5A", "4D,5A"
+                var tokens = query
+                    .Replace(",", " ").Replace("-", " ")
+                    .Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var bytes = new System.Collections.Generic.List<byte>();
+                foreach (var t in tokens)
+                {
+                    if (!byte.TryParse(t, System.Globalization.NumberStyles.HexNumber, null, out byte b))
+                    {
+                        TxtSearchResult.Text = $"Invalid hex token: "{t}"";
+                        return;
+                    }
+                    bytes.Add(b);
+                }
+                if (bytes.Count == 0) return;
+
+                result = forward
+                    ? await HexViewer.SearchAsync(bytes.ToArray())
+                    : await HexViewer.SearchPreviousAsync();
+            }
+            else
+            {
+                result = forward
+                    ? await HexViewer.SearchAsync(query)
+                    : await HexViewer.SearchPreviousAsync();
+            }
+
+            if (!result.Found)
+                TxtSearchResult.Text = "Not found.";
+            else if (result.Wrapped)
+                TxtSearchResult.Text = $"Found at 0x{result.Offset:X8}  (wrapped)";
+            else
+                TxtSearchResult.Text = $"Found at 0x{result.Offset:X8}";
+        }
 
         private void HexViewer_SelectionChanged(object sender, HexSelectionChangedEventArgs e)
         {

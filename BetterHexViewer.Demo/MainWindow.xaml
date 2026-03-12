@@ -90,6 +90,73 @@
                             Click="BtnShowSelection_Click"
                             ToolTipService.ToolTip="Show current selection info via Selection property"/>
 
+                    <!-- ── Search ── -->
+                    <TextBlock Text="SEARCH"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,16,12,4"/>
+
+                    <!-- Mode toggle -->
+                    <Grid Margin="8,0,8,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton x:Name="RbSearchText"
+                                     Content="Text"
+                                     Grid.Column="0"
+                                     IsChecked="True"
+                                     GroupName="SearchMode"
+                                     Checked="RbSearchMode_Changed"/>
+                        <RadioButton x:Name="RbSearchHex"
+                                     Content="Hex bytes"
+                                     Grid.Column="1"
+                                     GroupName="SearchMode"
+                                     Checked="RbSearchMode_Changed"/>
+                    </Grid>
+
+                    <TextBox x:Name="TxtSearch"
+                             PlaceholderText="Search…"
+                             HorizontalAlignment="Stretch"
+                             Margin="8,0"
+                             KeyDown="TxtSearch_KeyDown"/>
+
+                    <!-- Hint label (shown when Hex mode is active) -->
+                    <TextBlock x:Name="TxtSearchHint"
+                               Text="e.g.  4D 5A  or  4D5A"
+                               FontSize="10"
+                               Visibility="Collapsed"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               Margin="12,2,12,0"/>
+
+                    <!-- Search result message -->
+                    <TextBlock x:Name="TxtSearchResult"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               Margin="12,4,12,0"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+
+                    <Grid Margin="8,4,8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="BtnSearchPrev"
+                                Content="◀  Prev"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,2,0"
+                                Click="BtnSearchPrev_Click"
+                                ToolTipService.ToolTip="Find previous occurrence"/>
+                        <Button x:Name="BtnSearchNext"
+                                Content="Next  ▶"
+                                Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                Margin="2,0,0,0"
+                                Click="BtnSearchNext_Click"
+                                ToolTipService.ToolTip="Find next occurrence"/>
+                    </Grid>
+
                     <!-- ── Font ── -->
                     <TextBlock Text="FONT"
                                Style="{StaticResource CaptionTextBlockStyle}"

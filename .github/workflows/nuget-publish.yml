@@ -20,13 +20,13 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj
+        run: dotnet restore BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj
 
       - name: Build
-        run: dotnet build src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-restore
+        run: dotnet build BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-restore
 
       - name: Pack
-        run: dotnet pack src/BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-build --output ./nupkg
+        run: dotnet pack BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj --configuration Release --no-build --output ./nupkg
 
       - name: List nupkg folder
         run: dir ./nupkg
