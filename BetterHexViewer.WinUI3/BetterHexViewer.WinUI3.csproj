@@ -13,7 +13,7 @@
 
     <!-- NuGet metadata -->
     <PackageId>BetterHexViewer.WinUI3</PackageId>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <Authors>zipgenius.it</Authors>
     <Company>zipgenius.it</Company>
     <Product>BetterHexViewer WinUI 3</Product>
@@ -41,10 +41,6 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="icon.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
