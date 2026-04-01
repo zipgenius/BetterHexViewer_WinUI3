@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.7] – 2026-04-01
+
+### Added
+- **`HoverOffsetChanged` event** — raised when the pointer moves over a byte cell
+  in the HEX or ASCII panel. The event reports the hovered byte offset (or `-1`
+  when outside data) and whether the hover is in the ASCII column.
+
 ## [1.1.5] – 2026-03-12
 
 ### Added

@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.5
+// Version: 1.1.7
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -88,6 +88,15 @@ namespace BetterHexViewer.WinUI3
         public byte[] Data        { get; }
         internal HexSelectionChangedEventArgs(long start, long length, byte[] data)
         { StartOffset = start; Length = length; Data = data; }
+    }
+
+    public sealed class HexHoverOffsetChangedEventArgs : EventArgs
+    {
+        public long Offset { get; }
+        public bool IsAsciiColumn { get; }
+        public bool IsHexColumn => Offset >= 0 && !IsAsciiColumn;
+        internal HexHoverOffsetChangedEventArgs(long offset, bool isAsciiColumn)
+        { Offset = offset; IsAsciiColumn = isAsciiColumn; }
     }
 
     /// <summary>
@@ -458,11 +467,14 @@ namespace BetterHexViewer.WinUI3
         #endregion
 
         public event EventHandler<HexSelectionChangedEventArgs>? SelectionChanged;
+        public event EventHandler<HexHoverOffsetChangedEventArgs>? HoverOffsetChanged;
 
         // ── Search state ─────────────────────────────────────────────────
         private byte[]?            _lastPattern;       // last searched byte pattern
         private long               _lastMatchOffset = -1;
         private CancellationTokenSource? _searchCts;
+        private long _lastHoverEventOffset = long.MinValue;
+        private bool _lastHoverEventIsAscii;
 
         /// <summary>
         /// Raised when a search finds a match. Contains the match offset and length.
@@ -1167,7 +1179,7 @@ namespace BetterHexViewer.WinUI3
         {
             if (_mouseDown) return;
             var  pt  = e.GetCurrentPoint(_canvas).Position;
-            long idx = HitTest(pt.X, pt.Y);
+            long idx = HitTest(pt.X, pt.Y, out bool isAsciiColumn);
 
             // Update hover highlight
             if (idx != _hoverByte)
@@ -1175,6 +1187,8 @@ namespace BetterHexViewer.WinUI3
                 _hoverByte = idx;
                 ScheduleRender();
             }
+
+            FireHoverOffsetChanged(idx, isAsciiColumn);
 
             if (idx < 0)
             {
@@ -1211,6 +1225,7 @@ namespace BetterHexViewer.WinUI3
                 _hoverByte = -1;
                 ScheduleRender();
             }
+            FireHoverOffsetChanged(-1, false);
             HideTooltip();
         }
 
@@ -1471,7 +1486,11 @@ namespace BetterHexViewer.WinUI3
         // ═══════════════════════════════════════════════════════════════════
 
         private long HitTest(double x, double y)
+            => HitTest(x, y, out _);
+
+        private long HitTest(double x, double y, out bool isAsciiColumn)
         {
+            isAsciiColumn = false;
             if (DataLength == 0) return -1;
             double dy = y - _cachedDividerY;
             if (dy < 0) return -1;
@@ -1490,6 +1509,7 @@ namespace BetterHexViewer.WinUI3
                 if (x >= curX && x < nextX)
                 {
                     long idx = baseIdx + col;
+                    isAsciiColumn = false;
                     return idx < DataLength ? idx : -1;
                 }
                 curX = nextX;
@@ -1502,11 +1522,21 @@ namespace BetterHexViewer.WinUI3
                 if (col >= 0 && col < _bytesPerLine)
                 {
                     long idx = baseIdx + col;
+                    isAsciiColumn = true;
                     return idx < DataLength ? idx : -1;
                 }
             }
 
             return -1;
+        }
+
+        private void FireHoverOffsetChanged(long offset, bool isAsciiColumn)
+        {
+            if (HoverOffsetChanged == null) return;
+            if (offset == _lastHoverEventOffset && isAsciiColumn == _lastHoverEventIsAscii) return;
+            _lastHoverEventOffset = offset;
+            _lastHoverEventIsAscii = isAsciiColumn;
+            HoverOffsetChanged(this, new HexHoverOffsetChangedEventArgs(offset, isAsciiColumn));
         }
 
         private double HexStep(int index, int groupSize)

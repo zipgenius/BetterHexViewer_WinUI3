@@ -208,6 +208,14 @@ HexViewer.SearchResultFound += (sender, result) =>
     long length  = result.Length;
     bool wrapped = result.Wrapped;
 };
+
+// Fired when mouse hover enters/moves/exits a byte cell (HEX or ASCII panel)
+HexViewer.HoverOffsetChanged += (sender, e) =>
+{
+    long offset = e.Offset;          // -1 when pointer is outside data cells
+    bool isHex  = e.IsHexColumn;
+    bool isAsc  = e.IsAsciiColumn;
+};
 ```
 
 ---

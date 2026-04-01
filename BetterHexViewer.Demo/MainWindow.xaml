@@ -34,6 +34,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="TxtFileName"
@@ -54,6 +55,11 @@
                 <TextBlock x:Name="TxtBytesPerLine"
                            Grid.Column="3"
                            Margin="8,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                <TextBlock x:Name="TxtHover"
+                           Grid.Column="4"
+                           Margin="16,0,0,0"
                            VerticalAlignment="Center"
                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
             </Grid>

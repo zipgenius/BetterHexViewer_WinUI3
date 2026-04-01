@@ -50,6 +50,7 @@ namespace BetterHexViewer.Demo
         {
             InitializeComponent();
             Title = "BetterHexViewer WinUI 3 – Demo by zipgenius.it";
+            HexViewer.HoverOffsetChanged += HexViewer_HoverOffsetChanged;
             PopulateMonoFonts();
             PopulateEncodings();
             UpdateFontSizeLabel();
@@ -673,6 +674,19 @@ namespace BetterHexViewer.Demo
                 : $"Sel: 0x{e.StartOffset:X8}  len: {e.Length}";
         }
 
+        private void HexViewer_HoverOffsetChanged(object? sender, HexHoverOffsetChangedEventArgs e)
+        {
+            if (HexViewer == null)
+            {
+                TxtHover.Text = string.Empty;
+                return;
+            }
+
+            TxtHover.Text = e.Offset < 0
+                ? string.Empty
+                : $"Hover: {FormatOffsetByMode(e.Offset)} ({(e.IsAsciiColumn ? "ASCII" : "HEX")})";
+        }
+
         // ─── Helpers ──────────────────────────────────────────────────────
 
         private void UpdateStatusBytesPerLine()
@@ -688,5 +702,13 @@ namespace BetterHexViewer.Demo
             if (bytes < 1024 * 1024 * 1024L) return $"{bytes / (1024.0 * 1024):F1} MB";
             return $"{bytes / (1024.0 * 1024 * 1024):F2} GB";
         }
+
+        private string FormatOffsetByMode(long offset)
+            => HexViewer.OffsetFormat switch
+            {
+                OffsetFormat.Decimal => offset.ToString(),
+                OffsetFormat.Octal => Convert.ToString(offset, 8).PadLeft(11, '0'),
+                _ => $"0x{offset:X8}"
+            };
     }
 }
