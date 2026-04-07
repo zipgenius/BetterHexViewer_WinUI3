@@ -755,6 +755,10 @@ namespace BetterHexViewer.WinUI3
             return FindAllCoreAsync(pattern);
         }
 
+        // Size of each read buffer for chunked MMF search. 4 MB gives a good balance
+        // between memory pressure and amortising ReadArray() call overhead.
+        private const int SearchReadChunk = 4 * 1024 * 1024;
+
         private async Task<IReadOnlyList<long>> FindAllCoreAsync(byte[] pattern)
         {
             if (DataLength == 0 || pattern.Length == 0)
@@ -766,35 +770,117 @@ namespace BetterHexViewer.WinUI3
 
             _lastPattern = pattern;
 
+            // Snapshot fields used on background threads so we don't capture `this`.
+            byte[]?                   bytes = _bytes;
+            MemoryMappedViewAccessor? mmva  = _mmva;
+
             var results = await Task.Run(() =>
             {
-                var list = new List<long>();
-                int  m    = pattern.Length;
-                long n    = DataLength;
-                if (m > n) return list;
+                int  m = pattern.Length;
+                long n = DataLength;
+                if (m > n) return new List<long>();
 
-                // BMH skip table
+                // ── BMH bad-character skip table ──────────────────────────────
                 var skip = new int[256];
                 for (int i = 0; i < 256; i++) skip[i] = m;
                 for (int i = 0; i < m - 1; i++) skip[pattern[i]] = m - 1 - i;
 
-                long pos = 0;
-                while (pos <= n - m)
+                // ── Fast path: in-memory byte array ───────────────────────────
+                // The array is already pinned in managed heap, so direct indexing
+                // is the fastest possible access.
+                if (bytes != null)
                 {
-                    if (ct.IsCancellationRequested) return list;
-                    int j = m - 1;
-                    while (j >= 0 && pattern[j] == ByteAt(pos + j)) j--;
-                    if (j < 0)
+                    var list = new List<long>();
+                    long pos = 0;
+                    while (pos <= n - m)
                     {
-                        list.Add(pos);
-                        pos += m;   // non-overlapping matches
+                        if (ct.IsCancellationRequested) return list;
+                        int j = m - 1;
+                        while (j >= 0 && pattern[j] == bytes[pos + j]) j--;
+                        if (j < 0) { list.Add(pos); pos += m; }
+                        else       { pos += skip[bytes[pos + m - 1]]; }
                     }
-                    else
-                    {
-                        pos += skip[ByteAt(pos + m - 1)];
-                    }
+                    return list;
                 }
-                return list;
+
+                // ── MMF path: parallel chunked search ─────────────────────────
+                // Per-byte ReadByte() on a MemoryMappedViewAccessor has very high
+                // managed/native overhead.  Instead we bulk-read large slices with
+                // ReadArray<byte>(), which amortises that cost to ~1 call per 4 MB.
+                //
+                // The file is divided into (processorCount) equal segments.  Each
+                // segment is searched independently on a thread-pool thread.
+                // Matches that straddle a segment boundary are found by extending
+                // every segment's read window by (m-1) bytes into the next one.
+                if (mmva == null) return new List<long>();
+
+                int    cores    = Math.Max(1, Environment.ProcessorCount);
+                int    overlap  = m - 1;
+                // Keep each segment at SearchReadChunk bytes so per-thread allocation
+                // stays at ~4 MB regardless of file size.  Parallelism comes from the
+                // thread pool distributing the (potentially thousands of) segments.
+                long   segLen   = SearchReadChunk;
+
+                // Build the segment list
+                var segments = new List<(long start, long end)>();
+                for (long s = 0; s < n; s += segLen)
+                {
+                    long end = Math.Min(s + segLen + overlap, n);
+                    segments.Add((s, end));
+                }
+
+                // Search each segment in parallel, collecting results per segment
+                var segResults = new List<long>[segments.Count];
+                System.Threading.Tasks.Parallel.For(0, segments.Count,
+                    new System.Threading.Tasks.ParallelOptions
+                    {
+                        CancellationToken      = ct,
+                        MaxDegreeOfParallelism = cores
+                    },
+                    segIdx =>
+                    {
+                        (long segStart, long segEnd) = segments[segIdx];
+                        int segN = (int)(segEnd - segStart);   // <= SearchReadChunk + overlap
+
+                        // Per-thread buffer — heap-allocated once per segment (~4 MB).
+                        byte[] buf = new byte[segN];
+                        mmva.ReadArray(segStart, buf, 0, segN);
+
+                        var local = new List<long>();
+                        int pos   = 0;
+                        int limit = segN - m;
+                        while (pos <= limit)
+                        {
+                            if (ct.IsCancellationRequested) return;
+                            int j = m - 1;
+                            while (j >= 0 && pattern[j] == buf[pos + j]) j--;
+                            if (j < 0)
+                            {
+                                // Only record matches whose absolute offset falls within
+                                // this segment's "owned" range (i.e. not in the overlap
+                                // tail that the next segment will also scan).
+                                long absPos = segStart + pos;
+                                if (absPos < segStart + segLen || segIdx == segments.Count - 1)
+                                    local.Add(absPos);
+                                pos += m;
+                            }
+                            else
+                            {
+                                pos += skip[buf[pos + m - 1]];
+                            }
+                        }
+                        segResults[segIdx] = local;
+                    });
+
+                if (ct.IsCancellationRequested) return new List<long>();
+
+                // Merge segment results in order (they are already individually sorted).
+                int totalCount = 0;
+                foreach (var sr in segResults) if (sr != null) totalCount += sr.Count;
+                var merged = new List<long>(totalCount);
+                foreach (var sr in segResults) if (sr != null) merged.AddRange(sr);
+                return merged;
+
             }, ct).ConfigureAwait(false);
 
             return ct.IsCancellationRequested
@@ -1008,8 +1094,8 @@ namespace BetterHexViewer.WinUI3
         // ── Boyer-Moore-Horspool forward ──────────────────────────────────
         private long BmhForward(byte[] pat, long start, CancellationToken ct)
         {
-            int  m   = pat.Length;
-            long n   = DataLength;
+            int  m = pat.Length;
+            long n = DataLength;
             if (m > n) return -1;
 
             // Bad-character skip table
@@ -1017,14 +1103,52 @@ namespace BetterHexViewer.WinUI3
             for (int i = 0; i < 256; i++) skip[i] = m;
             for (int i = 0; i < m - 1; i++) skip[pat[i]] = m - 1 - i;
 
-            long i2 = start;
-            while (i2 <= n - m)
+            // ── Fast path: in-memory byte array ───────────────────────────────
+            if (_bytes != null)
+            {
+                long i2 = start;
+                while (i2 <= n - m)
+                {
+                    if (ct.IsCancellationRequested) return -1;
+                    int j = m - 1;
+                    while (j >= 0 && pat[j] == _bytes[i2 + j]) j--;
+                    if (j < 0) return i2;
+                    i2 += skip[_bytes[i2 + m - 1]];
+                }
+                return -1;
+            }
+
+            // ── MMF path: chunked bulk reads ──────────────────────────────────
+            // Avoids the heavy per-byte ReadByte() overhead on the accessor.
+            if (_mmva == null) return -1;
+
+            int  overlap  = m - 1;
+            int  bufSize  = SearchReadChunk + overlap;
+            byte[] buf    = new byte[bufSize];
+            long filePos  = start;
+
+            while (filePos <= n - m)
             {
                 if (ct.IsCancellationRequested) return -1;
-                int j = m - 1;
-                while (j >= 0 && pat[j] == ByteAt(i2 + j)) j--;
-                if (j < 0) return i2;
-                i2 += skip[ByteAt(i2 + m - 1)];
+
+                long remaining = n - filePos;
+                int  toRead    = (int)Math.Min(bufSize, remaining);
+                _mmva.ReadArray(filePos, buf, 0, toRead);
+
+                // Use int for the in-buffer position; bufSize is always <= int.MaxValue.
+                int bLimit = toRead - m;
+                int pos    = 0;
+                while (pos <= bLimit)
+                {
+                    int j = m - 1;
+                    while (j >= 0 && pat[j] == buf[pos + j]) j--;
+                    if (j < 0) return filePos + pos;
+                    pos += skip[buf[pos + m - 1]];
+                }
+
+                long advance = toRead - overlap;
+                if (advance <= 0) break;
+                filePos += advance;
             }
             return -1;
         }
@@ -1036,19 +1160,66 @@ namespace BetterHexViewer.WinUI3
             long n = DataLength;
             if (m > n) return -1;
 
-            // Bad-character skip table (reversed pattern)
+            // Bad-character skip table (reversed pattern, matching from the left)
             var skip = new int[256];
             for (int i = 0; i < 256; i++) skip[i] = m;
             for (int i = m - 1; i > 0; i--) skip[pat[i]] = i;
 
-            long i2 = Math.Min(start, n - m);
-            while (i2 >= 0)
+            long scanEnd = Math.Min(start, n - m);   // highest candidate start offset
+
+            // ── Fast path: in-memory byte array ───────────────────────────────
+            if (_bytes != null)
+            {
+                long i2 = scanEnd;
+                while (i2 >= 0)
+                {
+                    if (ct.IsCancellationRequested) return -1;
+                    int j = 0;
+                    while (j < m && pat[j] == _bytes[i2 + j]) j++;
+                    if (j == m) return i2;
+                    i2 -= skip[_bytes[i2]];
+                }
+                return -1;
+            }
+
+            // ── MMF path: chunked bulk reads (right-to-left) ──────────────────
+            // We walk backwards through the file in chunks of SearchReadChunk.
+            // Each chunk is read with an (m-1) byte prefix from the previous
+            // (i.e. right-hand) chunk so cross-boundary candidates are covered.
+            if (_mmva == null) return -1;
+
+            int    overlap  = m - 1;
+            long   chunkPos = scanEnd;           // last candidate start in current chunk
+            byte[] buf      = Array.Empty<byte>();
+
+            while (chunkPos >= 0)
             {
                 if (ct.IsCancellationRequested) return -1;
-                int j = 0;
-                while (j < m && pat[j] == ByteAt(i2 + j)) j++;
-                if (j == m) return i2;
-                i2 -= skip[ByteAt(i2)];
+
+                // Window: read from max(0, chunkPos - SearchReadChunk + 1)
+                // through (chunkPos + m - 1) inclusive, capped at n.
+                long winStart = Math.Max(0, chunkPos - SearchReadChunk + 1);
+                long winEnd   = Math.Min(n, chunkPos + m);   // exclusive
+                int  toRead   = (int)(winEnd - winStart);
+
+                if (buf.Length < toRead) buf = new byte[toRead];
+                _mmva.ReadArray(winStart, buf, 0, toRead);
+
+                // Scan backwards within this buffer.
+                // Use int for the in-buffer position; toRead is always <= int.MaxValue.
+                int localEnd = (int)(chunkPos - winStart);   // offset inside buf
+                int i2       = localEnd;
+                while (i2 >= 0)
+                {
+                    int j = 0;
+                    while (j < m && pat[j] == buf[i2 + j]) j++;
+                    if (j == m) return winStart + i2;
+                    i2 -= skip[buf[i2]];
+                }
+
+                // Move the window left; stop if we've already included offset 0
+                if (winStart == 0) break;
+                chunkPos = winStart + overlap - 1;
             }
             return -1;
         }
