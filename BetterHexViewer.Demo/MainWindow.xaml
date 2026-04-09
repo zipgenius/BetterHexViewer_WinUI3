@@ -23,6 +23,7 @@
                 Grid.Row="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
+                NoDataLoadedText="Drop a file here or use Open file…"
                 SelectionChanged="HexViewer_SelectionChanged"/>
 
             <!-- Status bar -->
