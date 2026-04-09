@@ -5,7 +5,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [1.2.0] – 2026-04-09
+## [1.2.1] – 2026-04-09
 
 ### Added
 - **`TooltipOffsetLabel` DP** (`string`, default `"Offset"`) — customises the
