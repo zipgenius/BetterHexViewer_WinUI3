@@ -408,6 +408,22 @@ namespace BetterHexViewer.WinUI3
         }
         #endregion
 
+        #region NoDataLoadedText
+        public static readonly DependencyProperty NoDataLoadedTextProperty =
+            DependencyProperty.Register(nameof(NoDataLoadedText), typeof(string),
+                typeof(BetterHexViewer), new PropertyMetadata("No data loaded.", OnRenderPropertyChanged));
+        /// <summary>
+        /// Message displayed in the viewer when no data is loaded.
+        /// Default is <c>"No data loaded."</c>. Set this to a localised or
+        /// application-specific string to customise the empty-state text.
+        /// </summary>
+        public string NoDataLoadedText
+        {
+            get => (string)GetValue(NoDataLoadedTextProperty);
+            set => SetValue(NoDataLoadedTextProperty, value);
+        }
+        #endregion
+
         #region ShowAsciiPanel
         public static readonly DependencyProperty ShowAsciiPanelProperty =
             DependencyProperty.Register(nameof(ShowAsciiPanel), typeof(bool),
@@ -2141,7 +2157,7 @@ namespace BetterHexViewer.WinUI3
 
             if (DataLength == 0)
             {
-                TxLeft(ds, "No data loaded.", hexStartX, dividerY + 4, _lineHeight, cData, fmt);
+                TxLeft(ds, NoDataLoadedText ?? "No data loaded.", hexStartX, dividerY + 4, _lineHeight, cData, fmt);
                 RenderScrollBar(ds, wf, h);
                 return;
             }
