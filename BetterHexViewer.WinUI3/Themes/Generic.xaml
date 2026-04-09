@@ -24,17 +24,25 @@
                                               VerticalAlignment="Stretch"
                                               ClearColor="Transparent"/>
 
+                        <!-- Hover-highlight overlay: only this layer is invalidated on mouse-move,
+                             so the main canvas (bytes, ruler, ASCII) never flickers. -->
+                        <canvas:CanvasControl x:Name="PART_HoverCanvas"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              ClearColor="Transparent"
+                                              IsHitTestVisible="False"/>
+
                         <Canvas IsHitTestVisible="False">
                             <Border x:Name="PART_TooltipBorder"
-                                    Background="#E0202020"
-                                    BorderBrush="#80808080"
+                                    Background="{ThemeResource ToolTipBackground}"
+                                    BorderBrush="{ThemeResource ToolTipBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="3"
                                     Padding="7,4"
                                     Visibility="Collapsed"
                                     IsHitTestVisible="False">
                                 <TextBlock x:Name="PART_TooltipText"
-                                           Foreground="White"
+                                           Foreground="{ThemeResource ToolTipForeground}"
                                            FontFamily="Segoe UI"
                                            FontSize="11"
                                            TextWrapping="NoWrap"/>

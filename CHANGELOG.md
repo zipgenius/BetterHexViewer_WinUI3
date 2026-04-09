@@ -5,6 +5,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.0] – 2026-04-09
+
+### Added
+- **`TooltipOffsetLabel` DP** (`string`, default `"Offset"`) — customises the
+  label prefix shown in the hover tooltip. Set to any string (e.g. `"Position"`)
+  or a localised value; the tooltip reads `"{label}: {formattedOffset}"`.
+
+### Changed
+- **Tooltip system colours** — `PART_TooltipBorder` and `PART_TooltipText` now
+  use `{ThemeResource ToolTipBackground}`, `{ThemeResource ToolTipBorderBrush}`,
+  and `{ThemeResource ToolTipForeground}` instead of hardcoded dark values,
+  so the tooltip automatically adapts to the active light / dark theme.
+- **Tooltip content simplified** — removed the `"Value: 0x… (…)"` line; the
+  tooltip now shows only the offset string.
+
+### Fixed
+- **Hover highlight flickering** — bytes, ASCII characters, and the ruler no
+  longer flicker on mouse-move. The hover border is now drawn on a dedicated
+  transparent `PART_HoverCanvas` overlay (a second `CanvasControl` stacked above
+  the main canvas). Only the overlay is invalidated on pointer movement; the main
+  canvas — which renders the ruler, bytes, and ASCII columns — is never touched.
+
+---
+
 ## [1.1.7] – 2026-04-01
 
 ### Added

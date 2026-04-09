@@ -115,6 +115,12 @@ namespace BetterHexViewer.WinUI3
 
         // ─── Win2D canvas ─────────────────────────────────────────────────
         private CanvasControl _canvas = null!;
+        /// <summary>
+        /// Transparent overlay canvas for hover highlights only.
+        /// Invalidated on mouse-move instead of the main canvas, so the
+        /// ruler, bytes and ASCII columns never flicker.
+        /// </summary>
+        private CanvasControl? _hoverCanvas;
 
         // ─── Tooltip overlay (Border + TextBlock in XAML template) ───────
         private Border    _tooltipBorder = null!;
@@ -190,6 +196,7 @@ namespace BetterHexViewer.WinUI3
 
         // ─── Render throttle ──────────────────────────────────────────────
         private bool _renderPending;
+        private bool _hoverRenderPending;
 
         // ─── Win2D text formats ───────────────────────────────────────────
         private CanvasTextFormat? _txFmt;
@@ -385,6 +392,22 @@ namespace BetterHexViewer.WinUI3
         }
         #endregion
 
+        #region TooltipOffsetLabel
+        public static readonly DependencyProperty TooltipOffsetLabelProperty =
+            DependencyProperty.Register(nameof(TooltipOffsetLabel), typeof(string),
+                typeof(BetterHexViewer), new PropertyMetadata("Offset"));
+        /// <summary>
+        /// Label shown before the offset value in the hover tooltip.
+        /// Default is <c>"Offset"</c>. Set to e.g. <c>"Position"</c> or a
+        /// localised string to customise the tooltip text.
+        /// </summary>
+        public string TooltipOffsetLabel
+        {
+            get => (string)GetValue(TooltipOffsetLabelProperty);
+            set => SetValue(TooltipOffsetLabelProperty, value);
+        }
+        #endregion
+
         #region ShowAsciiPanel
         public static readonly DependencyProperty ShowAsciiPanelProperty =
             DependencyProperty.Register(nameof(ShowAsciiPanel), typeof(bool),
@@ -471,6 +494,7 @@ namespace BetterHexViewer.WinUI3
 
         // ── Search state ─────────────────────────────────────────────────
         private byte[]?            _lastPattern;       // last searched byte pattern
+        private bool _lastIgnoreCase;
         private long               _lastMatchOffset = -1;
         private CancellationTokenSource? _searchCts;
         private long _lastHoverEventOffset = long.MinValue;
@@ -540,11 +564,15 @@ namespace BetterHexViewer.WinUI3
             base.OnApplyTemplate();
 
             _canvas = (CanvasControl)GetTemplateChild("PART_Canvas");
+            _hoverCanvas = GetTemplateChild("PART_HoverCanvas") as CanvasControl;
             _tooltipBorder = (Border)GetTemplateChild("PART_TooltipBorder");
             _tooltipText   = (TextBlock)GetTemplateChild("PART_TooltipText");
 
             _canvas.Draw        += OnCanvasDraw;
             _canvas.SizeChanged += (_, _) => { UpdateBytesPerLine(); UpdateScrollBar(); _canvas.Invalidate(); };
+
+            if (_hoverCanvas != null)
+                _hoverCanvas.Draw += OnHoverCanvasDraw;
 
             _canvas.PointerPressed  += OnPointerPressed;
             _canvas.PointerMoved    += OnPointerMoved;
@@ -704,11 +732,13 @@ namespace BetterHexViewer.WinUI3
         /// <paramref name="encoding"/> (or <see cref="AsciiEncoding"/> when null)
         /// and searches forward. Wraps around when reaching end of data.
         /// </summary>
-        public Task<HexSearchResult> SearchAsync(string text, Encoding? encoding = null)
+        public Task<HexSearchResult> SearchAsync(string text, Encoding? encoding = null,
+                                          bool ignoreCase = false)
         {
-            var enc     = encoding ?? _asciiEncoding;
-            var pattern = enc.GetBytes(text);
-            return SearchCoreAsync(pattern, forward: true);
+            var enc = encoding ?? _asciiEncoding;
+            var pattern = NormalizePattern(enc.GetBytes(text), ignoreCase);
+            _lastIgnoreCase = ignoreCase;
+            return SearchCoreAsync(pattern, forward: true, ignoreCase: ignoreCase);
         }
 
         /// <summary>Repeats the last search forward.</summary>
@@ -716,7 +746,8 @@ namespace BetterHexViewer.WinUI3
         {
             if (_lastPattern == null || _lastPattern.Length == 0)
                 return Task.FromResult(HexSearchResult.NotFound);
-            return SearchCoreAsync(_lastPattern, forward: true, fromAfterLast: true);
+            return SearchCoreAsync(_lastPattern, forward: true,
+                                   fromAfterLast: true, ignoreCase: _lastIgnoreCase);
         }
 
         /// <summary>Repeats the last search backward.</summary>
@@ -724,7 +755,8 @@ namespace BetterHexViewer.WinUI3
         {
             if (_lastPattern == null || _lastPattern.Length == 0)
                 return Task.FromResult(HexSearchResult.NotFound);
-            return SearchCoreAsync(_lastPattern, forward: false, fromAfterLast: true);
+            return SearchCoreAsync(_lastPattern, forward: false,
+                                   fromAfterLast: true, ignoreCase: _lastIgnoreCase);
         }
 
         /// <summary>Clears the stored search pattern and search highlight.</summary>
@@ -747,19 +779,44 @@ namespace BetterHexViewer.WinUI3
         /// Converts <paramref name="text"/> to bytes using
         /// <paramref name="encoding"/> (or <see cref="AsciiEncoding"/> when null)
         /// and returns the offset of every occurrence in the loaded data.
+        /// When <paramref name="ignoreCase"/> is true the comparison is
+        /// case-insensitive for ASCII letters (A–Z / a–z).
         /// </summary>
-        public Task<IReadOnlyList<long>> FindAllAsync(string text, Encoding? encoding = null)
+        public Task<IReadOnlyList<long>> FindAllAsync(string text, Encoding? encoding = null,
+                                               bool ignoreCase = false)
         {
-            var enc     = encoding ?? _asciiEncoding;
-            var pattern = enc.GetBytes(text);
-            return FindAllCoreAsync(pattern);
+            var enc = encoding ?? _asciiEncoding;
+            var pattern = NormalizePattern(enc.GetBytes(text), ignoreCase);
+            return FindAllCoreAsync(pattern, ignoreCase: ignoreCase);
         }
 
         // Size of each read buffer for chunked MMF search. 4 MB gives a good balance
         // between memory pressure and amortising ReadArray() call overhead.
         private const int SearchReadChunk = 4 * 1024 * 1024;
 
-        private async Task<IReadOnlyList<long>> FindAllCoreAsync(byte[] pattern)
+        /// <summary>
+        /// When <paramref name="ignoreCase"/> is true, returns a copy of
+        /// <paramref name="pattern"/> with all ASCII uppercase bytes (0x41–0x5A)
+        /// replaced by their lowercase equivalents (0x61–0x7A).
+        /// Returns the original array unchanged when false.
+        /// </summary>
+        private static byte[] NormalizePattern(byte[] pattern, bool ignoreCase)
+        {
+            if (!ignoreCase) return pattern;
+            var result = new byte[pattern.Length];
+            for (int i = 0; i < pattern.Length; i++)
+                result[i] = ToLowerAscii(pattern[i]);
+            return result;
+        }
+
+        private static byte ToLowerAscii(byte b)
+            => (b >= 0x41 && b <= 0x5A) ? (byte)(b | 0x20) : b;
+
+        private static byte ToLowerAscii(byte b, bool apply)
+            => apply ? ToLowerAscii(b) : b;
+
+        private async Task<IReadOnlyList<long>> FindAllCoreAsync(
+    byte[] pattern, bool ignoreCase = false)                   // ← NEW
         {
             if (DataLength == 0 || pattern.Length == 0)
                 return Array.Empty<long>();
@@ -796,9 +853,9 @@ namespace BetterHexViewer.WinUI3
                     {
                         if (ct.IsCancellationRequested) return list;
                         int j = m - 1;
-                        while (j >= 0 && pattern[j] == bytes[pos + j]) j--;
+                        while (j >= 0 && pattern[j] == ToLowerAscii(bytes[pos + j], ignoreCase)) j--;
                         if (j < 0) { list.Add(pos); pos += m; }
-                        else       { pos += skip[bytes[pos + m - 1]]; }
+                        else       { pos += skip[ToLowerAscii(bytes[pos + m - 1], ignoreCase)]; }
                     }
                     return list;
                 }
@@ -853,7 +910,7 @@ namespace BetterHexViewer.WinUI3
                         {
                             if (ct.IsCancellationRequested) return;
                             int j = m - 1;
-                            while (j >= 0 && pattern[j] == buf[pos + j]) j--;
+                            while (j >= 0 && pattern[j] == ToLowerAscii(buf[pos + j], ignoreCase)) j--;
                             if (j < 0)
                             {
                                 // Only record matches whose absolute offset falls within
@@ -866,7 +923,7 @@ namespace BetterHexViewer.WinUI3
                             }
                             else
                             {
-                                pos += skip[buf[pos + m - 1]];
+                                pos += skip[ToLowerAscii(buf[pos + m - 1], ignoreCase)];
                             }
                         }
                         segResults[segIdx] = local;
@@ -1005,7 +1062,8 @@ namespace BetterHexViewer.WinUI3
                 _topLine = caretRow - _sbVisibleLines + 1;
         }
         private async Task<HexSearchResult> SearchCoreAsync(
-            byte[] pattern, bool forward, bool fromAfterLast = false)
+    byte[] pattern, bool forward, bool fromAfterLast = false,
+    bool ignoreCase = false)                                   // ← NEW
         {
             if (DataLength == 0 || pattern.Length == 0)
                 return HexSearchResult.NotFound;
@@ -1041,10 +1099,10 @@ namespace BetterHexViewer.WinUI3
             }
 
             long matchOffset = await Task.Run(() =>
-                forward
-                    ? BmhForward(pattern, startPos, ct)
-                    : BmhBackward(pattern, startPos, ct),
-                ct).ConfigureAwait(false);
+    forward
+        ? BmhForward(pattern, startPos, ct, ignoreCase)
+        : BmhBackward(pattern, startPos, ct, ignoreCase),
+    ct).ConfigureAwait(false);
 
             if (ct.IsCancellationRequested) return HexSearchResult.NotFound;
 
@@ -1055,10 +1113,10 @@ namespace BetterHexViewer.WinUI3
             {
                 wrapped = true;
                 matchOffset = await Task.Run(() =>
-                    forward
-                        ? BmhForward(pattern, 0, ct)
-                        : BmhBackward(pattern, DataLength - 1, ct),
-                    ct).ConfigureAwait(false);
+    forward
+        ? BmhForward(pattern, 0, ct, ignoreCase)
+        : BmhBackward(pattern, DataLength - 1, ct, ignoreCase),
+    ct).ConfigureAwait(false);
             }
 
             if (ct.IsCancellationRequested) return HexSearchResult.NotFound;
@@ -1092,13 +1150,14 @@ namespace BetterHexViewer.WinUI3
         }
 
         // ── Boyer-Moore-Horspool forward ──────────────────────────────────
-        private long BmhForward(byte[] pat, long start, CancellationToken ct)
+        private long BmhForward(byte[] pat, long start, CancellationToken ct,
+                                 bool ignoreCase = false)
         {
             int  m = pat.Length;
             long n = DataLength;
             if (m > n) return -1;
 
-            // Bad-character skip table
+            // Bad-character skip table (pat is already normalised by NormalizePattern)
             var skip = new int[256];
             for (int i = 0; i < 256; i++) skip[i] = m;
             for (int i = 0; i < m - 1; i++) skip[pat[i]] = m - 1 - i;
@@ -1111,9 +1170,9 @@ namespace BetterHexViewer.WinUI3
                 {
                     if (ct.IsCancellationRequested) return -1;
                     int j = m - 1;
-                    while (j >= 0 && pat[j] == _bytes[i2 + j]) j--;
+                    while (j >= 0 && pat[j] == ToLowerAscii(_bytes[i2 + j], ignoreCase)) j--;
                     if (j < 0) return i2;
-                    i2 += skip[_bytes[i2 + m - 1]];
+                    i2 += skip[ToLowerAscii(_bytes[i2 + m - 1], ignoreCase)];
                 }
                 return -1;
             }
@@ -1141,9 +1200,9 @@ namespace BetterHexViewer.WinUI3
                 while (pos <= bLimit)
                 {
                     int j = m - 1;
-                    while (j >= 0 && pat[j] == buf[pos + j]) j--;
+                    while (j >= 0 && pat[j] == ToLowerAscii(buf[pos + j], ignoreCase)) j--;
                     if (j < 0) return filePos + pos;
-                    pos += skip[buf[pos + m - 1]];
+                    pos += skip[ToLowerAscii(buf[pos + m - 1], ignoreCase)];
                 }
 
                 long advance = toRead - overlap;
@@ -1154,13 +1213,15 @@ namespace BetterHexViewer.WinUI3
         }
 
         // ── Boyer-Moore-Horspool backward ─────────────────────────────────
-        private long BmhBackward(byte[] pat, long start, CancellationToken ct)
+        private long BmhBackward(byte[] pat, long start, CancellationToken ct,
+                                  bool ignoreCase = false)
         {
             int  m = pat.Length;
             long n = DataLength;
             if (m > n) return -1;
 
-            // Bad-character skip table (reversed pattern, matching from the left)
+            // Bad-character skip table (reversed pattern, matching from the left;
+            // pat is already normalised by NormalizePattern)
             var skip = new int[256];
             for (int i = 0; i < 256; i++) skip[i] = m;
             for (int i = m - 1; i > 0; i--) skip[pat[i]] = i;
@@ -1175,9 +1236,9 @@ namespace BetterHexViewer.WinUI3
                 {
                     if (ct.IsCancellationRequested) return -1;
                     int j = 0;
-                    while (j < m && pat[j] == _bytes[i2 + j]) j++;
+                    while (j < m && pat[j] == ToLowerAscii(_bytes[i2 + j], ignoreCase)) j++;
                     if (j == m) return i2;
-                    i2 -= skip[_bytes[i2]];
+                    i2 -= skip[ToLowerAscii(_bytes[i2], ignoreCase)];
                 }
                 return -1;
             }
@@ -1212,9 +1273,9 @@ namespace BetterHexViewer.WinUI3
                 while (i2 >= 0)
                 {
                     int j = 0;
-                    while (j < m && pat[j] == buf[i2 + j]) j++;
+                    while (j < m && pat[j] == ToLowerAscii(buf[i2 + j], ignoreCase)) j++;
                     if (j == m) return winStart + i2;
-                    i2 -= skip[buf[i2]];
+                    i2 -= skip[ToLowerAscii(buf[i2], ignoreCase)];
                 }
 
                 // Move the window left; stop if we've already included offset 0
@@ -1352,11 +1413,12 @@ namespace BetterHexViewer.WinUI3
             var  pt  = e.GetCurrentPoint(_canvas).Position;
             long idx = HitTest(pt.X, pt.Y, out bool isAsciiColumn);
 
-            // Update hover highlight
+            // Update hover highlight – only repaint the affected cells, not the whole canvas
             if (idx != _hoverByte)
             {
+                long oldHover = _hoverByte;
                 _hoverByte = idx;
-                ScheduleRender();
+                ScheduleHoverRender(oldHover, idx);
             }
 
             FireHoverOffsetChanged(idx, isAsciiColumn);
@@ -1393,8 +1455,9 @@ namespace BetterHexViewer.WinUI3
         {
             if (_hoverByte != -1)
             {
+                long oldHover = _hoverByte;
                 _hoverByte = -1;
-                ScheduleRender();
+                ScheduleHoverRender(oldHover, -1);
             }
             FireHoverOffsetChanged(-1, false);
             HideTooltip();
@@ -1403,16 +1466,14 @@ namespace BetterHexViewer.WinUI3
         private void ShowTooltip(long idx, Point pt)
         {
             if (idx < 0 || idx >= DataLength) return;
+            string label = TooltipOffsetLabel ?? "Offset";
             string offsetStr = OffsetFormat switch
             {
-                OffsetFormat.Decimal => $"Offset: {idx} (dec)",
-                OffsetFormat.Octal   => $"Offset: {Convert.ToString(idx, 8).PadLeft(11, '0')} (oct)",
-                _                   => $"Offset: 0x{idx:X8}",
+                OffsetFormat.Decimal => $"{label}: {idx} (dec)",
+                OffsetFormat.Octal   => $"{label}: {Convert.ToString(idx, 8).PadLeft(11, '0')} (oct)",
+                _                   => $"{label}: 0x{idx:X8}",
             };
-            string byteVal = $"Value: 0x{ByteAt(idx):X2} ({ByteAt(idx)})"
-                           + (ByteToAsciiChar(ByteAt(idx)) != '·'
-                              ? $" '{ByteToAsciiChar(ByteAt(idx))}'" : string.Empty);
-            _tooltipText.Text = $"{offsetStr}\n{byteVal}";
+            _tooltipText.Text = offsetStr;
             Microsoft.UI.Xaml.Controls.Canvas.SetLeft(_tooltipBorder, pt.X + 14);
             Microsoft.UI.Xaml.Controls.Canvas.SetTop (_tooltipBorder, pt.Y - 8);
             _tooltipBorder.Visibility = Visibility.Visible;
@@ -1542,9 +1603,33 @@ namespace BetterHexViewer.WinUI3
         {
             if (_renderPending) return;
             _renderPending = true;
+            // A full render supersedes any pending hover-only render
+            _hoverRenderPending = false;
             DispatcherQueue.TryEnqueue(
                 Microsoft.UI.Dispatching.DispatcherQueuePriority.High,
-                () => { _renderPending = false; _canvas?.Invalidate(); });
+                () =>
+                {
+                    _renderPending = false;
+                    _canvas?.Invalidate();
+                    // Keep the hover overlay in sync after scroll/resize/data changes
+                    _hoverCanvas?.Invalidate();
+                });
+        }
+
+        /// <summary>
+        /// Invalidates only the hover overlay canvas (PART_HoverCanvas) so the main
+        /// canvas — which renders the ruler, bytes and ASCII columns — is never
+        /// touched by a simple mouse-move.  The overlay is transparent everywhere
+        /// except for the 1 px hover border drawn by OnHoverCanvasDraw.
+        /// </summary>
+        private void ScheduleHoverRender(long oldByte, long newByte)
+        {
+            if (_hoverCanvas == null) return;
+            if (_hoverRenderPending) return;
+            _hoverRenderPending = true;
+            DispatcherQueue.TryEnqueue(
+                Microsoft.UI.Dispatching.DispatcherQueuePriority.High,
+                () => { _hoverRenderPending = false; _hoverCanvas?.Invalidate(); });
         }
 
         // ═══════════════════════════════════════════════════════════════════
@@ -1738,6 +1823,43 @@ namespace BetterHexViewer.WinUI3
         private void OnCanvasDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             Render(args.DrawingSession);
+        }
+
+        /// <summary>
+        /// Draws the hover highlight on the transparent overlay canvas.
+        /// Because this is a separate CanvasControl, invalidating it never
+        /// triggers a repaint of the main canvas (bytes, ruler, ASCII).
+        /// </summary>
+        private void OnHoverCanvasDraw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            var ds = args.DrawingSession;
+
+            if (_hoverByte < 0 || _hoverByte >= DataLength) return;
+
+            double dividerY = _cachedDividerY;
+            double rowH     = _lineHeight + ExtraLineGap;
+            if (dividerY <= 0 || rowH <= 0 || _bytesPerLine <= 0) return;
+
+            int hoverRow = (int)(_hoverByte / _bytesPerLine);
+            int vLines   = VisibleLineCount() + 1;
+            if (hoverRow < _topLine || hoverRow >= _topLine + vLines) return;
+
+            // Derive the same hover colour used by the main Render() pass
+            bool  dark     = IsDark;
+            Color cBg      = BrushColor(Background, dark ? Color.FromArgb(255,30,30,30) : Color.FromArgb(255,254,254,254));
+            Color cRulerFg = RulerForeground is SolidColorBrush rfb
+                             ? rfb.Color
+                             : BlendColor(cBg, (cBg.R * 0.299 + cBg.G * 0.587 + cBg.B * 0.114) < 128 ? Colors.White : Colors.Black, 0.80f);
+            Color cHover   = Color.FromArgb(160, cRulerFg.R, cRulerFg.G, cRulerFg.B);
+
+            var (hx, hy, hw, hh) = HexCellRect(_hoverByte, dividerY, rowH);
+            ds.DrawRectangle((float)hx, (float)hy, (float)hw, (float)hh, cHover, 1f);
+
+            if (ShowAsciiPanel)
+            {
+                var (ax, ay, aw, ah) = AsciiCellRect(_hoverByte, dividerY, rowH);
+                ds.DrawRectangle((float)ax, (float)ay, (float)aw, (float)ah, cHover, 1f);
+            }
         }
 
         private CanvasTextFormat GetFmt(bool bold)
@@ -2065,23 +2187,8 @@ namespace BetterHexViewer.WinUI3
                 }
             }
 
-            // PASS 6 – hover highlight (1px border on hovered byte in both panels)
-            if (_hoverByte >= 0 && _hoverByte < DataLength)
-            {
-                int hoverRow = (int)(_hoverByte / _bytesPerLine);
-                // Only draw if row is visible
-                if (hoverRow >= _topLine && hoverRow < _topLine + vLines)
-                {
-                    var (hx, hy, hw, hh) = HexCellRect(_hoverByte, dividerY, rowH);
-                    ds.DrawRectangle((float)hx, (float)hy, (float)hw, (float)hh, cHover, 1f);
-
-                    if (ShowAsciiPanel)
-                    {
-                        var (ax, ay, aw, ah) = AsciiCellRect(_hoverByte, dividerY, rowH);
-                        ds.DrawRectangle((float)ax, (float)ay, (float)aw, (float)ah, cHover, 1f);
-                    }
-                }
-            }
+            // PASS 6 – hover highlight is now rendered by PART_HoverCanvas (see OnHoverCanvasDraw)
+            // so invalidating the hover overlay never causes the main canvas to repaint.
 
             RenderScrollBar(ds, wf, h);
         }

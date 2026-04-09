@@ -134,7 +134,12 @@
                                Visibility="Collapsed"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                Margin="12,2,12,0"/>
-
+                    <!-- Shown only in Text mode -->
+                    <CheckBox x:Name="ChkIgnoreCase"
+          Content="Case insensitive"
+          FontSize="11"
+          Margin="8,2,8,0"
+          IsChecked="False"/>
                     <!-- Search result message -->
                     <TextBlock x:Name="TxtSearchResult"
                                FontSize="11"

@@ -535,6 +535,9 @@ namespace BetterHexViewer.Demo
             if (TxtSearchHint == null) return;
             TxtSearchHint.Visibility = (RbSearchHex?.IsChecked == true)
                 ? Visibility.Visible : Visibility.Collapsed;
+            ChkIgnoreCase.Visibility = RbSearchHex.IsChecked == true
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         private async void TxtSearch_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -579,7 +582,8 @@ namespace BetterHexViewer.Demo
             }
             else
             {
-                offsets = await HexViewer.FindAllAsync(query);
+                bool ignoreCase = ChkIgnoreCase?.IsChecked == true;
+                offsets = await HexViewer.FindAllAsync(query, ignoreCase: ignoreCase);
             }
 
             if (offsets.Count == 0)
@@ -654,8 +658,9 @@ namespace BetterHexViewer.Demo
             }
             else
             {
+                bool ignoreCase = ChkIgnoreCase?.IsChecked == true;
                 result = forward
-                    ? await HexViewer.SearchAsync(query)
+                    ? await HexViewer.SearchAsync(query, ignoreCase: ignoreCase)
                     : await HexViewer.SearchPreviousAsync();
             }
 
