@@ -6,6 +6,8 @@
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>BetterHexViewer.Demo</RootNamespace>
     <AssemblyName>BetterHexViewer.Demo</AssemblyName>
+    <Version>1.2.3</Version>
+    <NeutralLanguage>en</NeutralLanguage>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWinUI>true</UseWinUI>

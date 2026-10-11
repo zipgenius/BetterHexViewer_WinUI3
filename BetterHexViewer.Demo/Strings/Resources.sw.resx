@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – Onyesho la zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>Dondosha faili hapa au tumia Fungua faili…</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>Hakuna faili iliyopakiwa.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>FAILI</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  Fungua faili…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>Fungua faili yoyote</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  Onyesha uteuzi…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Onyesha taarifa za uteuzi kupitia sifa ya Selection</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>TAFUTA</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>Maandishi</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>Baiti za hex</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>Tafuta…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>mf.  4D 5A  au  4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>Usitofautishe herufi kubwa na ndogo</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  Iliyotangulia</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Inayofuata  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>Tafuta tokeo lililotangulia</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>Tafuta tokeo linalofuata</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  Tafuta zote</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>Orodhesha matokeo yote</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>FONTI</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>Familia</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>Fonti yenye upana sawa</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>Ukubwa</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>Punguza ukubwa wa fonti</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>Ongeza ukubwa wa fonti</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  Nzito</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>Washa au zima fonti nzito</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>MPANGILIO</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>Muundo wa nafasi</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>Muundo wa safu ya nafasi</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>Heksadesimali</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>Desimali</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>Oktali</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>Upangaji wa safu katika vikundi</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>Upangaji wa safu za hex katika vikundi</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>Baiti: {0}</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>Baiti 1</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>Usimbaji wa ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>Usimbaji unaotumika kuonyesha paneli ya ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>Nafasi kati ya baiti</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>Nafasi ya mlalo kati ya baiti (px)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>Nafasi kati ya mistari</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>Nafasi ya ziada ya wima kati ya mistari (px 0–12)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  Upana wote</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>Rekebisha safu zilingane na upana wa dirisha</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  Paneli ya ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>Onyesha / ficha safu ya ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>RANGI</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>Mandhari iliyowekwa tayari</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>Mandhari ya rangi iliyowekwa tayari</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  Angavu</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  Nyeusi</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  Matrix</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>Mandharinyuma</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>Rangi ya mandharinyuma</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>Maandishi</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>Rangi ya maandishi</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>Maandishi ya nafasi</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>Rangi ya maandishi ya safu ya nafasi</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>Mandharinyuma ya nafasi</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>Rangi ya mandharinyuma ya safu ya nafasi</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>Mandharinyuma ya ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>Rangi ya mandharinyuma ya paneli ya ASCII</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>Kitenganishi</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>Rangi ya mstari wa kutenganisha</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>Mandharinyuma ya uteuzi</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>Rangi ya mandharinyuma ya uteuzi</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>Maandishi ya uteuzi</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>Rangi ya maandishi ya uteuzi</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  Rejesha rangi</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>Rejesha rangi zote kwa chaguo-msingi za mandhari</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>Hakuna baiti zilizochaguliwa kwa sasa.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… (baiti nyingine {0})</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>Nafasi ya kuanzia: 0x{0:X8} ({0})
+Urefu: baiti {1}
+Data[] yote: baiti {2} (bila kikomo)
+
+Hakiki ya hex:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>Uteuzi — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>Sawa</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Ghairi</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Funga</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>Inapakia {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>Hitilafu: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>Chagua rangi</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>Inatafuta…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>Thamani batili ya hex: "{0}"</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>Haijapatikana.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… na nyingine {0}</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>Matokeo yaliyopatikana: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>Imepatikana katika 0x{0:X8} (utafutaji umezunguka)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>Imepatikana katika 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>Uteuzi: 0x{0:X8}  urefu: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>Kielekezi: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>Safu: {0}</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (chaguo-msingi)</value>
+  </data>
+</root>

@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.3] – 2026-10-11
+
+### Added
+- Translated control and demo resources in French (`fr`), German (`de`),
+  Russian (`ru`), Arabic (`ar`), Japanese (`ja`), Swedish (`sv`), Spanish (`es`),
+  Swahili (`sw`), Simplified Chinese (`zh-Hans`) and Slovak (`sk`).
+- English neutral resources and automatic .NET UI-culture fallback.
+- Localised clipboard menu, offset header, tooltip label and empty-view message;
+  translated demo toolbar, tooltips, dialogs, search and status messages.
+
+### Changed
+- Library and demo versions updated to **1.2.3**.
+- Demo toolbar widened and text labels wrapped to accommodate translations.
+- GitHub/NuGet README updated with language selection, supported cultures,
+  current .NET/SDK requirements and versioned installation instructions.
+- NuGet description and release notes now describe the included localisation.
+
+### Fixed
+- Local pack script now targets the actual project path and defaults to the
+  project version instead of overriding it with `1.0.0`.
+
+---
+
 ## [1.2.1] – 2026-04-09
 
 ### Added

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – zipgenius.it によるデモ</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>ここにファイルをドロップするか、「ファイルを開く…」を選択</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>ファイルが読み込まれていません。</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>ファイル</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  ファイルを開く…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>任意のファイルを開く</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  選択範囲を表示…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Selection プロパティで選択範囲の情報を表示</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>検索</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>テキスト</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>16進バイト</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>検索…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>例: 4D 5A または 4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>大文字と小文字を区別しない</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  前へ</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>次へ  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>前の一致を検索</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>次の一致を検索</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  すべて検索</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>すべての一致を一覧表示</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>フォント</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>種類</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>等幅フォント</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>サイズ</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>フォントサイズを縮小</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>フォントサイズを拡大</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  太字</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>太字を切り替え</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>レイアウト</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>オフセット形式</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>オフセット列の形式</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>16進数</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>10進数</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>8進数</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>列のグループ化</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>16進列のグループ化</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>{0} バイト</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 バイト</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>ASCII エンコーディング</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>ASCII パネルの表示に使用するエンコーディング</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>バイト間隔</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>バイト間の水平間隔 (px)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>行間隔</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>行間の追加垂直間隔 (0～12 px)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  幅に合わせる</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>列をウィンドウの幅に自動調整</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  ASCII パネル</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>ASCII 列を表示 / 非表示</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>色</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>テーマのプリセット</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>配色テーマのプリセット</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  ライト</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  ダーク</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  マトリックス</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>背景</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>背景色</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>前景</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>文字色</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>オフセットの文字</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>オフセット列の文字色</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>オフセットの背景</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>オフセット列の背景色</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>ASCII の背景</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>ASCII パネルの背景色</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>区切り線</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>区切り線の色</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>選択範囲の背景</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>選択範囲の背景色</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>選択範囲の文字</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>選択範囲の文字色</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  色をリセット</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>すべての色をテーマの既定値に戻す</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>バイトが選択されていません。</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… (さらに {0} バイト)</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>開始オフセット: 0x{0:X8} ({0})
+長さ: {1} バイト
+Data[] 全体: {2} バイト (制限なし)
+
+16進プレビュー:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>選択範囲 — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>キャンセル</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>閉じる</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>{0} を読み込み中…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>エラー: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>色を選択</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>検索中…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>無効な16進値: 「{0}」</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>見つかりませんでした。</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… ほか {0} 件</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>一致件数: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>0x{0:X8} で検出 (先頭・末尾を折り返し)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>0x{0:X8} で検出</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>選択: 0x{0:X8}  長さ: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>ポインター: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>{0} 列</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (既定)</value>
+  </data>
+</root>

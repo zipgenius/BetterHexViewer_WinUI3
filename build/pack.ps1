@@ -1,8 +1,8 @@
 # pack.ps1 – Build and pack BetterHexViewer.WinUI3 NuGet package
-# Usage:  .\build\pack.ps1 -Version 1.0.0
+# Usage:  .\build\pack.ps1 (uses the project version), or -Version 1.2.3
 param(
     [Parameter(Mandatory=$false)]
-    [string]$Version = "1.0.0",
+    [string]$Version = "",
 
     [Parameter(Mandatory=$false)]
     [string]$Configuration = "Release",
@@ -11,8 +11,13 @@ param(
     [string]$Platform = "x64"
 )
 
-$ProjectFile = Join-Path $PSScriptRoot "..\src\BetterHexViewer.WinUI3\BetterHexViewer.WinUI3.csproj"
+$ProjectFile = Join-Path $PSScriptRoot "..\BetterHexViewer.WinUI3\BetterHexViewer.WinUI3.csproj"
 $OutputDir   = Join-Path $PSScriptRoot "..\nupkg"
+
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    [xml]$ProjectXml = Get-Content -LiteralPath $ProjectFile
+    $Version = [string]($ProjectXml.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1)
+}
 
 Write-Host "=== BetterHexViewer.WinUI3 NuGet Pack ===" -ForegroundColor Cyan
 Write-Host "  Version       : $Version"

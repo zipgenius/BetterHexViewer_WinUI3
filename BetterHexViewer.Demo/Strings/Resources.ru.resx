@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – Демонстрация от zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>Перетащите файл сюда или нажмите «Открыть файл…»</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>Файл не загружен.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>ФАЙЛ</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  Открыть файл…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>Открыть любой файл</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  Показать выделение…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Показать выделение через свойство Selection</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>ПОИСК</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>Текст</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>Байты HEX</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>Поиск…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>например, 4D 5A или 4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>Без учёта регистра</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  Назад</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Далее  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>Найти предыдущее совпадение</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>Найти следующее совпадение</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  Найти все</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>Показать все совпадения</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>ШРИФТ</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>Гарнитура</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>Моноширинный шрифт</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>Размер</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>Уменьшить размер шрифта</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>Увеличить размер шрифта</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  Жирный</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>Переключить жирное начертание</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>РАЗМЕТКА</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>Формат смещения</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>Формат столбца смещения</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>Шестнадцатеричный</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>Десятичный</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>Восьмеричный</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>Группировка столбцов</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>Группировка столбцов HEX</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>Байтов: {0}</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 байт</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>Кодировка ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>Кодировка панели ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>Интервал между байтами</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>Горизонтальный интервал между байтами (пкс)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>Интервал между строками</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>Дополнительный интервал между строками (0–12 пкс)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  На всю ширину</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>Подогнать столбцы по ширине окна</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  Панель ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>Показать / скрыть столбец ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>ЦВЕТА</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>Готовая тема</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>Готовая цветовая тема</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  Светлая</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  Тёмная</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  Матрица</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>Фон</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>Цвет фона</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>Текст</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>Цвет текста</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>Текст смещения</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>Цвет текста столбца смещения</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>Фон смещения</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>Цвет фона столбца смещения</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>Фон ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>Цвет фона панели ASCII</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>Разделитель</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>Цвет разделительной линии</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>Фон выделения</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>Цвет фона выделения</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>Текст выделения</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>Цвет текста выделения</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  Сбросить цвета</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>Восстановить цвета темы</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>Байты не выделены.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… (ещё байтов: {0})</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>Начальное смещение: 0x{0:X8} ({0})
+Длина: {1} байт
+Полный Data[]: {2} байт (без ограничения)
+
+Просмотр HEX:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>Выделение — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>ОК</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Отмена</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Закрыть</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>Загрузка {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>Ошибка: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>Выберите цвет</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>Поиск…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>Недопустимое значение HEX: «{0}»</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>Не найдено.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… и ещё {0}</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>Найдено совпадений: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>Найдено по адресу 0x{0:X8} (переход через границу)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>Найдено по адресу 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>Выделение: 0x{0:X8}  длина: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>Под указателем: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>Столбцов: {0}</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (по умолчанию)</value>
+  </data>
+</root>

@@ -1,7 +1,7 @@
 // BetterHexViewer.cs
 // WinUI 3 Hex Viewer Control
 // Part of BetterHexViewer.WinUI3 – by zipgenius.it
-// Version: 1.1.7
+// Version: 1.2.3
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -395,10 +395,10 @@ namespace BetterHexViewer.WinUI3
         #region TooltipOffsetLabel
         public static readonly DependencyProperty TooltipOffsetLabelProperty =
             DependencyProperty.Register(nameof(TooltipOffsetLabel), typeof(string),
-                typeof(BetterHexViewer), new PropertyMetadata("Offset"));
+                typeof(BetterHexViewer), new PropertyMetadata(Locale.Get("Offset")));
         /// <summary>
         /// Label shown before the offset value in the hover tooltip.
-        /// Default is <c>"Offset"</c>. Set to e.g. <c>"Position"</c> or a
+        /// Default is the localised equivalent of <c>"Offset"</c>. Set to e.g. <c>"Position"</c> or a
         /// localised string to customise the tooltip text.
         /// </summary>
         public string TooltipOffsetLabel
@@ -411,10 +411,10 @@ namespace BetterHexViewer.WinUI3
         #region NoDataLoadedText
         public static readonly DependencyProperty NoDataLoadedTextProperty =
             DependencyProperty.Register(nameof(NoDataLoadedText), typeof(string),
-                typeof(BetterHexViewer), new PropertyMetadata("No data loaded.", OnRenderPropertyChanged));
+                typeof(BetterHexViewer), new PropertyMetadata(Locale.Get("NoData"), OnRenderPropertyChanged));
         /// <summary>
         /// Message displayed in the viewer when no data is loaded.
-        /// Default is <c>"No data loaded."</c>. Set this to a localised or
+        /// Default is the localised equivalent of <c>"No data loaded."</c>. Set this to a localised or
         /// application-specific string to customise the empty-state text.
         /// </summary>
         public string NoDataLoadedText
@@ -1330,8 +1330,8 @@ namespace BetterHexViewer.WinUI3
         private void BuildContextMenu()
         {
             _contextMenu = new MenuFlyout();
-            var copyHex   = new MenuFlyoutItem { Text = "Copy bytes (hex)" };
-            var copyAscii = new MenuFlyoutItem { Text = "Copy as ASCII" };
+            var copyHex   = new MenuFlyoutItem { Text = Locale.Get("CopyHex") };
+            var copyAscii = new MenuFlyoutItem { Text = Locale.Get("CopyAscii") };
             copyHex.Click   += (_, _) => CopySelectionAsHex();
             copyAscii.Click += (_, _) => CopySelectionAsAscii();
             _contextMenu.Items.Add(copyHex);
@@ -1482,7 +1482,7 @@ namespace BetterHexViewer.WinUI3
         private void ShowTooltip(long idx, Point pt)
         {
             if (idx < 0 || idx >= DataLength) return;
-            string label = TooltipOffsetLabel ?? "Offset";
+            string label = TooltipOffsetLabel ?? Locale.Get("Offset");
             string offsetStr = OffsetFormat switch
             {
                 OffsetFormat.Decimal => $"{label}: {idx} (dec)",
@@ -2142,7 +2142,7 @@ namespace BetterHexViewer.WinUI3
             }
 
             // PASS 4 – ruler labels
-            TxCenter(ds, "OFFSET", 0, 0, offsetW, dividerY, cRulerFg, fmtBold);
+            TxCenter(ds, Locale.Get("OffsetHeader"), 0, 0, offsetW, dividerY, cRulerFg, fmtBold);
             double rxHex = hexStartX;
             for (int i = 0; i < _bytesPerLine; i++)
             {
@@ -2157,7 +2157,7 @@ namespace BetterHexViewer.WinUI3
 
             if (DataLength == 0)
             {
-                TxLeft(ds, NoDataLoadedText ?? "No data loaded.", hexStartX, dividerY + 4, _lineHeight, cData, fmt);
+                TxLeft(ds, NoDataLoadedText ?? Locale.Get("NoData"), hexStartX, dividerY + 4, _lineHeight, cData, fmt);
                 RenderScrollBar(ds, wf, h);
                 return;
             }

@@ -49,7 +49,7 @@ namespace BetterHexViewer.Demo
         public MainWindow()
         {
             InitializeComponent();
-            Title = "BetterHexViewer WinUI 3 – Demo by zipgenius.it";
+            ApplyLocalization();
             HexViewer.HoverOffsetChanged += HexViewer_HoverOffsetChanged;
             PopulateMonoFonts();
             PopulateEncodings();
@@ -66,27 +66,27 @@ namespace BetterHexViewer.Demo
 
         private static readonly EncodingEntry[] KnownEncodings =
         {
-            new("Latin-1 / ISO-8859-1 (default)", 28591),
-            new("IBM CP437 (DOS/OEM US)",          437),
-            new("IBM CP850 (DOS/OEM Multilingual)", 850),
-            new("IBM CP858 (DOS/OEM €)",           858),
-            new("Windows CP1250 (Central EU)",     1250),
-            new("Windows CP1251 (Cyrillic)",       1251),
-            new("Windows CP1252 (Western EU)",     1252),
-            new("Windows CP1253 (Greek)",          1253),
-            new("Windows CP1254 (Turkish)",        1254),
-            new("Windows CP1255 (Hebrew)",         1255),
-            new("Windows CP1256 (Arabic)",         1256),
-            new("ISO-8859-2 (Central EU)",         28592),
-            new("ISO-8859-5 (Cyrillic)",           28595),
-            new("ISO-8859-7 (Greek)",              28597),
-            new("ISO-8859-8 (Hebrew)",             28598),
-            new("KOI8-R (Russian)",                20866),
-            new("Shift-JIS (Japanese)",            932),
-            new("GBK / CP936 (Simplified Chinese)",936),
-            new("Big5 (Traditional Chinese)",      950),
-            new("EUC-KR (Korean)",                 51949),
-            new("UTF-8",                           65001),
+            new("Latin-1 / ISO-8859-1", 28591),
+            new("IBM CP437", 437),
+            new("IBM CP850", 850),
+            new("IBM CP858", 858),
+            new("Windows CP1250", 1250),
+            new("Windows CP1251", 1251),
+            new("Windows CP1252", 1252),
+            new("Windows CP1253", 1253),
+            new("Windows CP1254", 1254),
+            new("Windows CP1255", 1255),
+            new("Windows CP1256", 1256),
+            new("ISO-8859-2", 28592),
+            new("ISO-8859-5", 28595),
+            new("ISO-8859-7", 28597),
+            new("ISO-8859-8", 28598),
+            new("KOI8-R", 20866),
+            new("Shift-JIS", 932),
+            new("GBK / CP936", 936),
+            new("Big5", 950),
+            new("EUC-KR", 51949),
+            new("UTF-8", 65001),
         };
 
         private void PopulateEncodings()
@@ -100,7 +100,9 @@ namespace BetterHexViewer.Demo
                 try
                 {
                     System.Text.Encoding.GetEncoding(entry.CodePage);
-                    available.Add(entry);
+                    available.Add(entry.CodePage == 28591
+                        ? entry with { Label = Locale.Format("DefaultEncoding", entry.Label) }
+                        : entry);
                 }
                 catch { /* not available on this system */ }
             }
@@ -232,7 +234,7 @@ namespace BetterHexViewer.Demo
             string message;
             if (!sel.HasSelection)
             {
-                message = "No bytes are currently selected.";
+                message = Locale.Get("NoSelection");
             }
             else
             {
@@ -246,18 +248,15 @@ namespace BetterHexViewer.Demo
                     hexParts.Append(sel.Data[i].ToString("X2"));
                 }
                 if (sel.Length > 64)
-                    hexParts.Append($"\n… ({sel.Length - 64} more bytes)");
+                    hexParts.Append(Locale.Format("MoreBytes", sel.Length - 64));
 
-                message =
-                    $"Start offset : 0x{sel.StartOffset:X8} ({sel.StartOffset})\n" +
-                    $"Length       : {sel.Length} byte{(sel.Length != 1 ? "s" : "")}\n" +
-                    $"Full Data[]  : {sel.Data.Length} bytes (no limit)\n\n" +
-                    $"Hex preview:\n{hexParts}";
+                message = Locale.Format("SelectionDetails",
+                    sel.StartOffset, sel.Length, sel.Data.Length, hexParts.ToString());
             }
 
             var dialog = new ContentDialog
             {
-                Title             = "Selection — HexViewer.Selection",
+                Title             = Locale.Get("SelectionTitle"),
                 Content           = new TextBlock
                 {
                     Text         = message,
@@ -265,7 +264,7 @@ namespace BetterHexViewer.Demo
                     FontSize     = 12,
                     TextWrapping = TextWrapping.Wrap
                 },
-                CloseButtonText = "OK",
+                CloseButtonText = Locale.Get("OK"),
                 XamlRoot        = Content.XamlRoot
             };
             await dialog.ShowAsync();
@@ -283,7 +282,7 @@ namespace BetterHexViewer.Demo
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
-            TxtFileName.Text = $"Loading {file.Name}…";
+            TxtFileName.Text = Locale.Format("Loading", file.Name);
             try
             {
                 await HexViewer.OpenFileAsync(file.Path);
@@ -293,7 +292,7 @@ namespace BetterHexViewer.Demo
             }
             catch (Exception ex)
             {
-                TxtFileName.Text = $"Error: {ex.Message}";
+                TxtFileName.Text = Locale.Format("Error", ex.Message);
             }
             UpdateStatusBytesPerLine();
         }
@@ -517,10 +516,10 @@ namespace BetterHexViewer.Demo
 
             var dialog = new ContentDialog
             {
-                Title             = "Pick a colour",
+                Title             = Locale.Get("PickColour"),
                 Content           = picker,
-                PrimaryButtonText = "OK",
-                CloseButtonText   = "Cancel",
+                PrimaryButtonText = Locale.Get("OK"),
+                CloseButtonText   = Locale.Get("Cancel"),
                 XamlRoot          = Content.XamlRoot
             };
 
@@ -535,7 +534,7 @@ namespace BetterHexViewer.Demo
             if (TxtSearchHint == null) return;
             TxtSearchHint.Visibility = (RbSearchHex?.IsChecked == true)
                 ? Visibility.Visible : Visibility.Collapsed;
-            ChkIgnoreCase.Visibility = RbSearchHex.IsChecked == true
+            ChkIgnoreCase.Visibility = RbSearchHex?.IsChecked == true
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
@@ -558,7 +557,7 @@ namespace BetterHexViewer.Demo
             var query = TxtSearch?.Text?.Trim();
             if (string.IsNullOrEmpty(query)) return;
 
-            TxtSearchResult.Text = "Searching…";
+            TxtSearchResult.Text = Locale.Get("Searching");
 
             IReadOnlyList<long> offsets;
 
@@ -572,7 +571,7 @@ namespace BetterHexViewer.Demo
                 {
                     if (!byte.TryParse(t, System.Globalization.NumberStyles.HexNumber, null, out byte b))
                     {
-                        TxtSearchResult.Text = $"Invalid hex token: \"{t}\"";
+                        TxtSearchResult.Text = Locale.Format("InvalidHex", t);
                         return;
                     }
                     bytes.Add(b);
@@ -588,7 +587,7 @@ namespace BetterHexViewer.Demo
 
             if (offsets.Count == 0)
             {
-                TxtSearchResult.Text = "Not found.";
+                TxtSearchResult.Text = Locale.Get("NotFound");
                 return;
             }
 
@@ -598,7 +597,7 @@ namespace BetterHexViewer.Demo
             for (int i = 0; i < shown; i++)
                 sb.AppendLine($"0x{offsets[i]:X8}  ({offsets[i]})");
             if (offsets.Count > 1000)
-                sb.AppendLine($"… and {offsets.Count - 1000} more");
+                sb.AppendLine(Locale.Format("MoreResults", offsets.Count - 1000));
 
             var scroll = new ScrollViewer
             {
@@ -614,13 +613,13 @@ namespace BetterHexViewer.Demo
 
             var dialog = new ContentDialog
             {
-                Title             = $"{offsets.Count} occurrence{(offsets.Count == 1 ? "" : "s")} found",
+                Title             = Locale.Format("Occurrences", offsets.Count),
                 Content           = scroll,
-                CloseButtonText   = "Close",
+                CloseButtonText   = Locale.Get("Close"),
                 XamlRoot          = Content.XamlRoot
             };
 
-            TxtSearchResult.Text = $"{offsets.Count} occurrence{(offsets.Count == 1 ? "" : "s")} found.";
+            TxtSearchResult.Text = Locale.Format("Occurrences", offsets.Count);
             await dialog.ShowAsync();
         }
 
@@ -630,7 +629,7 @@ namespace BetterHexViewer.Demo
             var query = TxtSearch?.Text?.Trim();
             if (string.IsNullOrEmpty(query)) return;
 
-            TxtSearchResult.Text = "Searching…";
+            TxtSearchResult.Text = Locale.Get("Searching");
 
             HexSearchResult result;
 
@@ -645,7 +644,7 @@ namespace BetterHexViewer.Demo
                 {
                     if (!byte.TryParse(t, System.Globalization.NumberStyles.HexNumber, null, out byte b))
                     {
-                        TxtSearchResult.Text = $"Invalid hex token: \"{t}\"";
+                        TxtSearchResult.Text = Locale.Format("InvalidHex", t);
                         return;
                     }
                     bytes.Add(b);
@@ -665,18 +664,18 @@ namespace BetterHexViewer.Demo
             }
 
             if (!result.Found)
-                TxtSearchResult.Text = "Not found.";
+                TxtSearchResult.Text = Locale.Get("NotFound");
             else if (result.Wrapped)
-                TxtSearchResult.Text = $"Found at 0x{result.Offset:X8}  (wrapped)";
+                TxtSearchResult.Text = Locale.Format("FoundWrapped", result.Offset);
             else
-                TxtSearchResult.Text = $"Found at 0x{result.Offset:X8}";
+                TxtSearchResult.Text = Locale.Format("Found", result.Offset);
         }
 
         private void HexViewer_SelectionChanged(object sender, HexSelectionChangedEventArgs e)
         {
             TxtSelection.Text = e.StartOffset < 0
                 ? string.Empty
-                : $"Sel: 0x{e.StartOffset:X8}  len: {e.Length}";
+                : Locale.Format("SelectionStatus", e.StartOffset, e.Length);
         }
 
         private void HexViewer_HoverOffsetChanged(object? sender, HexHoverOffsetChangedEventArgs e)
@@ -689,7 +688,7 @@ namespace BetterHexViewer.Demo
 
             TxtHover.Text = e.Offset < 0
                 ? string.Empty
-                : $"Hover: {FormatOffsetByMode(e.Offset)} ({(e.IsAsciiColumn ? "ASCII" : "HEX")})";
+                : Locale.Format("HoverStatus", FormatOffsetByMode(e.Offset), e.IsAsciiColumn ? "ASCII" : "HEX");
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────
@@ -697,7 +696,7 @@ namespace BetterHexViewer.Demo
         private void UpdateStatusBytesPerLine()
         {
             if (TxtBytesPerLine == null || HexViewer == null) return;
-            TxtBytesPerLine.Text = $"{HexViewer.BytesPerLine} cols";
+            TxtBytesPerLine.Text = Locale.Format("ColumnsStatus", HexViewer.BytesPerLine);
         }
 
         private static string FormatSize(long bytes)

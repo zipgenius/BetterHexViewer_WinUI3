@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Offset">
+    <value>Position</value>
+  </data>
+  <data xml:space="preserve" name="OffsetHeader">
+    <value>POSITION</value>
+  </data>
+  <data xml:space="preserve" name="NoData">
+    <value>Inga data inlästa.</value>
+  </data>
+  <data xml:space="preserve" name="CopyHex">
+    <value>Kopiera byte (hex)</value>
+  </data>
+  <data xml:space="preserve" name="CopyAscii">
+    <value>Kopiera som ASCII</value>
+  </data>
+</root>

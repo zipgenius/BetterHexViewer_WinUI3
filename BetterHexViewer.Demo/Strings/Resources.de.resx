@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – Demo von zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>Datei hier ablegen oder Datei öffnen… wählen</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>Keine Datei geladen.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>DATEI</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  Datei öffnen…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>Beliebige Datei öffnen</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  Auswahl anzeigen…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Auswahl über die Eigenschaft Selection anzeigen</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>SUCHE</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>Text</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>Hex-Bytes</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>Suchen…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>z. B.  4D 5A  oder  4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>Groß-/Kleinschreibung ignorieren</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  Zurück</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Weiter  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>Vorheriges Vorkommen suchen</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>Nächstes Vorkommen suchen</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  Alle suchen</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>Alle Vorkommen auflisten</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>SCHRIFT</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>Schriftart</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>Nichtproportionale Schriftart</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>Größe</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>Schriftgröße verkleinern</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>Schriftgröße vergrößern</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  Fett</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>Fettschrift umschalten</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>LAYOUT</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>Positionsformat</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>Format der Positionsspalte</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>Hexadezimal</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>Dezimal</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>Oktal</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>Spaltengruppierung</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>Gruppierung der Hex-Spalten</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>{0} Bytes</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 Byte</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>ASCII-Kodierung</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>Kodierung für den ASCII-Bereich</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>Byte-Abstand</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>Horizontaler Byte-Abstand (px)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>Zeilenabstand</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>Zusätzlicher Zeilenabstand (0–12 px)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  Volle Breite</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>Spalten an Fensterbreite anpassen</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  ASCII-Bereich</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>ASCII-Spalte anzeigen / ausblenden</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>FARBEN</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>Designvorlage</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>Vordefiniertes Farbdesign</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  Hell</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  Dunkel</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  Matrix</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>Hintergrund</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>Hintergrundfarbe</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>Vordergrund</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>Textfarbe</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>Positionstext</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>Textfarbe der Positionsspalte</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>Positionshintergrund</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>Hintergrundfarbe der Positionsspalte</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>ASCII-Hintergrund</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>Hintergrundfarbe des ASCII-Bereichs</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>Trennlinie</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>Farbe der Trennlinien</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>Auswahlhintergrund</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>Hintergrundfarbe der Auswahl</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>Auswahltext</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>Textfarbe der Auswahl</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  Farben zurücksetzen</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>Alle Farben auf Designvorgaben zurücksetzen</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>Derzeit sind keine Bytes ausgewählt.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… ({0} weitere Bytes)</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>Startposition: 0x{0:X8} ({0})
+Länge: {1} Bytes
+Vollständiges Data[]: {2} Bytes (ohne Limit)
+
+Hex-Vorschau:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>Auswahl — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Abbrechen</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Schließen</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>{0} wird geladen…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>Fehler: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>Farbe auswählen</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>Suche läuft…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>Ungültiger Hex-Wert: „{0}“</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>Nicht gefunden.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… und {0} weitere</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>Gefundene Treffer: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>Gefunden bei 0x{0:X8} (umgebrochen)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>Gefunden bei 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>Auswahl: 0x{0:X8}  Länge: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>Zeiger: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>{0} Spalten</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (Standard)</value>
+  </data>
+</root>

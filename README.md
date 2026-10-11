@@ -9,6 +9,8 @@
 **BetterHexViewer.WinUI3** is a feature-rich, fully customisable hex-viewer control for Windows App SDK / WinUI 3 applications.
 All rendering is GPU-accelerated via **Win2D** (`CanvasControl`) — a single `DrawingSession` replaces thousands of XAML elements, delivering smooth scrolling even on 4K displays with files of any size.
 
+**Version 1.2.3** adds translated resources for the control and demo in ten languages, with English fallback.
+
 ---
 
 ## Features
@@ -31,7 +33,8 @@ ASCII encoding | `AsciiEncoding` — Latin-1 (default), IBM CP437, UTF-8, CP1252
 ASCII panel | Toggleable via `ShowAsciiPanel`
 Font control | `FontFamily`, `FontSize`, `FontWeight` — hot-reloadable at runtime
 Colour themes | All brushes are bindable — background, foreground, offsets, ruler, selection, dividers
-Tooltip | 500 ms hover tooltip showing offset and byte value
+Tooltip | 500 ms hover tooltip showing the offset, with a customisable label
+Localisation | English plus French, German, Russian, Arabic, Japanese, Swedish, Spanish, Swahili, Simplified Chinese and Slovak
 SelectionChanged event | `StartOffset`, `Length`, full `byte[]` (no length cap on the property)
 ScrollToOffset | Scroll to any byte offset programmatically
 
@@ -43,7 +46,8 @@ Component | Minimum version
 --- | ---
 Windows App SDK | 1.8
 Target OS | Windows 10 19041 (20H1)
-.NET | 8.0
+.NET | 10.0
+Windows SDK targeting pack | 10.0.26100.0 (the runtime minimum remains 10.0.19041.0)
 Win2D | `Microsoft.Graphics.Win2D` 1.3.0
 
 ---
@@ -53,7 +57,7 @@ Win2D | `Microsoft.Graphics.Win2D` 1.3.0
 ### 1 — Install the NuGet package
 
 ```shell
-dotnet add package BetterHexViewer.WinUI3
+dotnet add package BetterHexViewer.WinUI3 --version 1.2.3
 ```
 
 ### 2 — Add the XAML namespace
@@ -140,6 +144,8 @@ Property | Type | Default | Description
 `AsciiEncoding` | `Encoding` | Latin-1 | Encoding used in the ASCII panel
 `BytesPerLine` *(read-only)* | `int` | 16 | Current number of columns
 `FileSize` *(read-only)* | `long` | 0 | Size of loaded data in bytes
+`TooltipOffsetLabel` | `string` | Localised `Offset` | Label prefix in the hover tooltip; can be overridden
+`NoDataLoadedText` | `string` | Localised `No data loaded.` | Empty-view message; can be overridden
 
 ### Font
 
@@ -233,7 +239,7 @@ public enum ColumnGroupSize { One = 1, Two = 2, Four = 4, Eight = 8, Sixteen = 1
 
 ```shell
 git clone https://github.com/zipgenius/BetterHexViewer_WinUI3.git
-cd BetterHexViewer.WinUI3
+cd BetterHexViewer_WinUI3
 dotnet restore
 dotnet build -c Release -p:Platform=x64
 ```
@@ -248,6 +254,83 @@ Create a NuGet package:
 
 ```shell
 dotnet pack BetterHexViewer.WinUI3/BetterHexViewer.WinUI3.csproj -c Release -p:Platform=x64 -o nupkg
+```
+
+Alternatively, run `./build/pack.ps1` in PowerShell. The script uses the version
+from the library project by default and accepts `-Version`, `-Configuration`
+and `-Platform` overrides. Version 1.2.3 produces
+`BetterHexViewer.WinUI3.1.2.3.nupkg` and its symbol package. The package includes
+this README and the translated satellite assemblies; consumers do not need to
+copy resource files manually.
+
+The existing GitHub workflow publishes packages using the `NUGET_API_KEY`
+repository secret when a `v*.*.*` tag is pushed (use `v1.2.3` for this release).
+Its manual trigger also publishes. Updating source files or building locally
+does not publish a release to NuGet.org.
+
+---
+
+## Localisation
+
+The control and demo use `.resx` resources and .NET `ResourceManager` lookup
+through `CultureInfo.CurrentUICulture`. English is the neutral fallback.
+
+Language | Culture
+--- | ---
+English (fallback) | `en`
+French | `fr`
+German | `de`
+Russian | `ru`
+Arabic | `ar`
+Japanese | `ja`
+Swedish | `sv`
+Spanish | `es`
+Swahili | `sw`
+Simplified Chinese | `zh-Hans`
+Slovak | `sk`
+
+Regional cultures such as `fr-FR`, `de-DE`, `sw-KE` and `zh-CN` resolve through
+the .NET culture fallback chain. Unsupported languages use the English strings.
+Translated control text includes the offset header, tooltip label, empty-view
+message and clipboard menu. The demo also translates toolbar labels, tooltips,
+selection dialogs, loading/error messages, search results and status labels.
+Encoding names, ASCII/HEX identifiers and byte values remain technical identifiers.
+Byte offsets and hex columns retain their order for every language, including Arabic.
+
+To select a language explicitly, set the UI culture at app startup, **before the
+first control is created or its dependency properties are accessed**:
+
+```csharp
+using System.Globalization;
+
+var uiCulture = CultureInfo.GetCultureInfo("fr-FR");
+CultureInfo.DefaultThreadCurrentUICulture = uiCulture;
+CultureInfo.CurrentUICulture = uiCulture;
+// Now create the application window and its BetterHexViewer controls.
+```
+
+Keep `CurrentCulture` if you want to retain the user's number formatting, or set
+it separately. The UI culture selects labels; `AsciiEncoding` selects how file
+bytes are decoded and is independent of the interface language.
+XAML labels and dependency-property defaults are resolved at initialisation;
+changing culture does not refresh an existing interface automatically. Restart
+the app after changing the language. Host applications can override
+`TooltipOffsetLabel` and `NoDataLoadedText` as before:
+
+```xml
+<hex:BetterHexViewer TooltipOffsetLabel="Position"
+                     NoDataLoadedText="Open a file to begin." />
+```
+
+Resources are in `BetterHexViewer.WinUI3/Strings` and
+`BetterHexViewer.Demo/Strings`. Each language must have the same keys and format
+placeholders as its neutral `Resources.resx` file.
+
+After building Release/x64 and packing the library, verify resource completeness,
+formatting, compiled translations, culture fallback and package contents with:
+
+```shell
+dotnet run --project build/LocalizationCheck -- .
 ```
 
 ---

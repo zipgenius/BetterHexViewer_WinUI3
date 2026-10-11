@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – Demo av zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>Släpp en fil här eller välj Öppna fil…</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>Ingen fil inläst.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>FIL</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  Öppna fil…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>Öppna valfri fil</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  Visa markering…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Visa markeringen via egenskapen Selection</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>SÖK</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>Text</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>Hexbyte</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>Sök…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>t.ex.  4D 5A  eller  4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>Ignorera skiftläge</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  Föreg.</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Nästa  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>Hitta föregående träff</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>Hitta nästa träff</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  Hitta alla</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>Lista alla träffar</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>TECKENSNITT</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>Familj</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>Teckensnitt med fast bredd</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>Storlek</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>Minska teckenstorlek</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>Öka teckenstorlek</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  Fet</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>Växla fetstil</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>LAYOUT</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>Positionsformat</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>Format för positionskolumnen</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>Hexadecimalt</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>Decimalt</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>Oktalt</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>Kolumngruppering</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>Gruppering av hexkolumner</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>{0} byte</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 byte</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>ASCII-kodning</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>Kodning för ASCII-panelen</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>Byteavstånd</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>Horisontellt byteavstånd (px)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>Radavstånd</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>Extra vertikalt radavstånd (0–12 px)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  Full bredd</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>Anpassa kolumner till fönsterbredden</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  ASCII-panel</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>Visa / dölj ASCII-kolumnen</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>FÄRGER</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>Förinställt tema</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>Förinställt färgtema</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  Ljust</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  Mörkt</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  Matrix</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>Bakgrund</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>Bakgrundsfärg</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>Förgrund</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>Textfärg</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>Positionstext</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>Textfärg i positionskolumnen</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>Positionsbakgrund</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>Bakgrundsfärg i positionskolumnen</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>ASCII-bakgrund</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>Bakgrundsfärg i ASCII-panelen</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>Avdelare</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>Färg på avdelare</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>Markeringsbakgrund</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>Bakgrundsfärg för markering</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>Markeringstext</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>Textfärg för markering</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  Återställ färger</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>Återställ alla färger till temats standardvärden</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>Inga byte är markerade.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… ({0} byte till)</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>Startposition: 0x{0:X8} ({0})
+Längd: {1} byte
+Hela Data[]: {2} byte (utan gräns)
+
+Hexförhandsvisning:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>Markering — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Avbryt</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Stäng</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>Läser in {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>Fel: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>Välj en färg</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>Söker…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>Ogiltigt hexvärde: ”{0}”</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>Inga träffar.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… och {0} till</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>Antal träffar: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>Hittat vid 0x{0:X8} (omstart)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>Hittat vid 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>Mark.: 0x{0:X8}  längd: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>Pekare: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>{0} kol.</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (standard)</value>
+  </data>
+</root>

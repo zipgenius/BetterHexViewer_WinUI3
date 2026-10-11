@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – zipgenius.it 演示</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>将文件拖放到此处，或使用“打开文件…”</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>未加载文件。</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>文件</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  打开文件…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>打开任意文件</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  显示选区…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>通过 Selection 属性显示选区信息</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>搜索</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>文本</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>十六进制字节</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>搜索…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>例如：4D 5A 或 4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>忽略大小写</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  上一个</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>下一个  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>查找上一个匹配项</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>查找下一个匹配项</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  查找全部</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>列出所有匹配项</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>字体</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>字体系列</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>等宽字体系列</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>大小</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>减小字号</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>增大字号</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  粗体</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>切换粗体</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>布局</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>偏移量格式</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>偏移量列格式</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>十六进制</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>十进制</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>八进制</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>列分组</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>十六进制列分组</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>{0} 字节</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 字节</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>ASCII 编码</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>用于显示 ASCII 面板的编码</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>字节间距</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>字节水平间距（像素）</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>行间距</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>行间额外垂直间距（0–12 像素）</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  全宽</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>自动调整列以适应窗口宽度</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  ASCII 面板</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>显示／隐藏 ASCII 列</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>颜色</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>预设主题</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>预设配色主题</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  浅色</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  深色</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  矩阵</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>背景</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>背景颜色</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>前景</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>文本颜色</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>偏移量文本</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>偏移量列文本颜色</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>偏移量背景</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>偏移量列背景颜色</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>ASCII 背景</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>ASCII 面板背景颜色</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>分隔线</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>分隔线颜色</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>选区背景</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>选区背景颜色</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>选区文本</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>选区文本颜色</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  重置颜色</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>将所有颜色重置为主题默认值</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>当前未选择任何字节。</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+…（还有 {0} 字节）</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>起始偏移量：0x{0:X8} ({0})
+长度：{1} 字节
+完整 Data[]：{2} 字节（无限制）
+
+十六进制预览：
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>选区 — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>确定</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>取消</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>关闭</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>正在加载 {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>错误：{0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>选择颜色</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>正在搜索…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>无效的十六进制值：“{0}”</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>未找到。</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>…还有 {0} 项</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>找到的匹配项：{0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>在 0x{0:X8} 找到（循环搜索）</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>在 0x{0:X8} 找到</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>选区：0x{0:X8}  长度：{1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>悬停：{0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>{0} 列</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0}（默认）</value>
+  </data>
+</root>

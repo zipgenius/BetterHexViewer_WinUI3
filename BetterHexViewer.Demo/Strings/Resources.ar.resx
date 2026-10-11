@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – عرض توضيحي من zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>أفلت ملفًا هنا أو استخدم «فتح ملف…»</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>لم يتم تحميل ملف.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>ملف</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  فتح ملف…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>فتح أي ملف</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  عرض التحديد…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>عرض معلومات التحديد عبر الخاصية Selection</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>بحث</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>نص</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>بايتات HEX</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>بحث…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>مثال: 4D 5A أو 4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>تجاهل حالة الأحرف</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  السابق</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>التالي  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>البحث عن التطابق السابق</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>البحث عن التطابق التالي</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  البحث عن الكل</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>عرض جميع التطابقات</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>الخط</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>عائلة الخط</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>عائلة خط ثابت العرض</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>الحجم</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>تصغير حجم الخط</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>تكبير حجم الخط</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  عريض</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>تبديل الخط العريض</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>التخطيط</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>تنسيق الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>تنسيق عمود الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>ست عشري</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>عشري</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>ثماني</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>تجميع الأعمدة</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>تجميع أعمدة HEX</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>بايتات: {0}</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>بايت واحد</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>ترميز ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>الترميز المستخدم لعرض لوحة ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>تباعد البايتات</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>التباعد الأفقي بين البايتات (بكسل)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>تباعد الصفوف</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>تباعد رأسي إضافي بين الصفوف (0–12 بكسل)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  العرض الكامل</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>ملاءمة الأعمدة تلقائيًا لعرض النافذة</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  لوحة ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>إظهار / إخفاء عمود ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>الألوان</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>سمة جاهزة</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>سمة ألوان جاهزة</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  فاتح</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  داكن</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  ماتريكس</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>الخلفية</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>لون الخلفية</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>المقدمة</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>لون النص</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>نص الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>لون نص عمود الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>خلفية الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>لون خلفية عمود الإزاحة</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>خلفية ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>لون خلفية لوحة ASCII</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>الفاصل</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>لون خط الفاصل</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>خلفية التحديد</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>لون خلفية التحديد</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>نص التحديد</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>لون نص التحديد</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  إعادة ضبط الألوان</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>إعادة جميع الألوان إلى إعدادات السمة الافتراضية</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>لا توجد بايتات محددة حاليًا.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… (بايتات إضافية: {0})</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>الإزاحة الأولية: 0x{0:X8} ({0})
+الطول: {1} بايت
+Data[] كامل: {2} بايت (بلا حد)
+
+معاينة HEX:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>التحديد — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>موافق</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>إلغاء</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>إغلاق</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>جارٍ تحميل {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>خطأ: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>اختر لونًا</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>جارٍ البحث…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>قيمة HEX غير صالحة: «{0}»</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>لم يتم العثور على نتائج.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… و{0} إضافية</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>التطابقات التي تم العثور عليها: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>تم العثور عليه عند 0x{0:X8} (بحث دائري)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>تم العثور عليه عند 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>التحديد: 0x{0:X8}  الطول: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>تحت المؤشر: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>أعمدة: {0}</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (افتراضي)</value>
+  </data>
+</root>

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="WindowTitle">
+    <value>BetterHexViewer WinUI 3 – Ukážka od zipgenius.it</value>
+  </data>
+  <data xml:space="preserve" name="DropFile">
+    <value>Presuňte sem súbor alebo použite Otvoriť súbor…</value>
+  </data>
+  <data xml:space="preserve" name="NoFile">
+    <value>Nie je načítaný žiadny súbor.</value>
+  </data>
+  <data xml:space="preserve" name="FileSection">
+    <value>SÚBOR</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>📂  Otvoriť súbor…</value>
+  </data>
+  <data xml:space="preserve" name="OpenFileTip">
+    <value>Otvoriť ľubovoľný súbor</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelection">
+    <value>🔍  Zobraziť výber…</value>
+  </data>
+  <data xml:space="preserve" name="ShowSelectionTip">
+    <value>Zobraziť informácie o výbere cez vlastnosť Selection</value>
+  </data>
+  <data xml:space="preserve" name="SearchSection">
+    <value>HĽADANIE</value>
+  </data>
+  <data xml:space="preserve" name="TextMode">
+    <value>Text</value>
+  </data>
+  <data xml:space="preserve" name="HexMode">
+    <value>Hex bajty</value>
+  </data>
+  <data xml:space="preserve" name="SearchPlaceholder">
+    <value>Hľadať…</value>
+  </data>
+  <data xml:space="preserve" name="SearchHint">
+    <value>napr.  4D 5A  alebo  4D5A</value>
+  </data>
+  <data xml:space="preserve" name="IgnoreCase">
+    <value>Nerozlišovať veľkosť písmen</value>
+  </data>
+  <data xml:space="preserve" name="Previous">
+    <value>◀  Späť</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Ďalej  ▶</value>
+  </data>
+  <data xml:space="preserve" name="PreviousTip">
+    <value>Nájsť predchádzajúci výskyt</value>
+  </data>
+  <data xml:space="preserve" name="NextTip">
+    <value>Nájsť ďalší výskyt</value>
+  </data>
+  <data xml:space="preserve" name="FindAll">
+    <value>≡  Nájsť všetky</value>
+  </data>
+  <data xml:space="preserve" name="FindAllTip">
+    <value>Zobraziť všetky výskyty</value>
+  </data>
+  <data xml:space="preserve" name="FontSection">
+    <value>PÍSMO</value>
+  </data>
+  <data xml:space="preserve" name="FontFamily">
+    <value>Rodina</value>
+  </data>
+  <data xml:space="preserve" name="FontFamilyTip">
+    <value>Neproporcionálna rodina písiem</value>
+  </data>
+  <data xml:space="preserve" name="FontSize">
+    <value>Veľkosť</value>
+  </data>
+  <data xml:space="preserve" name="DecreaseFont">
+    <value>Zmenšiť písmo</value>
+  </data>
+  <data xml:space="preserve" name="IncreaseFont">
+    <value>Zväčšiť písmo</value>
+  </data>
+  <data xml:space="preserve" name="Bold">
+    <value>𝐁  Tučné</value>
+  </data>
+  <data xml:space="preserve" name="BoldTip">
+    <value>Prepnúť tučné písmo</value>
+  </data>
+  <data xml:space="preserve" name="LayoutSection">
+    <value>ROZLOŽENIE</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormat">
+    <value>Formát pozície</value>
+  </data>
+  <data xml:space="preserve" name="OffsetFormatTip">
+    <value>Formát stĺpca pozície</value>
+  </data>
+  <data xml:space="preserve" name="Hexadecimal">
+    <value>Hexadecimálny</value>
+  </data>
+  <data xml:space="preserve" name="Decimal">
+    <value>Desiatkový</value>
+  </data>
+  <data xml:space="preserve" name="Octal">
+    <value>Osmičkový</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGrouping">
+    <value>Zoskupenie stĺpcov</value>
+  </data>
+  <data xml:space="preserve" name="ColumnGroupingTip">
+    <value>Zoskupenie hex stĺpcov</value>
+  </data>
+  <data xml:space="preserve" name="ByteCount">
+    <value>Počet bajtov: {0}</value>
+  </data>
+  <data xml:space="preserve" name="OneByte">
+    <value>1 bajt</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncoding">
+    <value>Kódovanie ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiEncodingTip">
+    <value>Kódovanie použité v paneli ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacing">
+    <value>Rozostup bajtov</value>
+  </data>
+  <data xml:space="preserve" name="ByteSpacingTip">
+    <value>Vodorovný rozostup bajtov (px)</value>
+  </data>
+  <data xml:space="preserve" name="RowGap">
+    <value>Rozostup riadkov</value>
+  </data>
+  <data xml:space="preserve" name="RowGapTip">
+    <value>Dodatočný zvislý rozostup riadkov (0–12 px)</value>
+  </data>
+  <data xml:space="preserve" name="FullWidth">
+    <value>⇔  Celá šírka</value>
+  </data>
+  <data xml:space="preserve" name="FullWidthTip">
+    <value>Prispôsobiť stĺpce šírke okna</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanel">
+    <value>A  Panel ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiPanelTip">
+    <value>Zobraziť / skryť stĺpec ASCII</value>
+  </data>
+  <data xml:space="preserve" name="ColoursSection">
+    <value>FARBY</value>
+  </data>
+  <data xml:space="preserve" name="ThemePreset">
+    <value>Predvolená téma</value>
+  </data>
+  <data xml:space="preserve" name="ThemePresetTip">
+    <value>Predvolená farebná téma</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>☀  Svetlá</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>🌙  Tmavá</value>
+  </data>
+  <data xml:space="preserve" name="Matrix">
+    <value>🔬  Matrix</value>
+  </data>
+  <data xml:space="preserve" name="Background">
+    <value>Pozadie</value>
+  </data>
+  <data xml:space="preserve" name="BackgroundTip">
+    <value>Farba pozadia</value>
+  </data>
+  <data xml:space="preserve" name="Foreground">
+    <value>Popredie</value>
+  </data>
+  <data xml:space="preserve" name="ForegroundTip">
+    <value>Farba textu</value>
+  </data>
+  <data xml:space="preserve" name="OffsetText">
+    <value>Text pozície</value>
+  </data>
+  <data xml:space="preserve" name="OffsetTextTip">
+    <value>Farba textu stĺpca pozície</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackground">
+    <value>Pozadie pozície</value>
+  </data>
+  <data xml:space="preserve" name="OffsetBackgroundTip">
+    <value>Farba pozadia stĺpca pozície</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackground">
+    <value>Pozadie ASCII</value>
+  </data>
+  <data xml:space="preserve" name="AsciiBackgroundTip">
+    <value>Farba pozadia panelu ASCII</value>
+  </data>
+  <data xml:space="preserve" name="Divider">
+    <value>Oddeľovač</value>
+  </data>
+  <data xml:space="preserve" name="DividerTip">
+    <value>Farba oddeľovacej čiary</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackground">
+    <value>Pozadie výberu</value>
+  </data>
+  <data xml:space="preserve" name="SelectionBackgroundTip">
+    <value>Farba pozadia výberu</value>
+  </data>
+  <data xml:space="preserve" name="SelectionText">
+    <value>Text výberu</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTextTip">
+    <value>Farba textu výberu</value>
+  </data>
+  <data xml:space="preserve" name="ResetColours">
+    <value>↺  Obnoviť farby</value>
+  </data>
+  <data xml:space="preserve" name="ResetColoursTip">
+    <value>Obnoviť všetky farby podľa témy</value>
+  </data>
+  <data xml:space="preserve" name="NoSelection">
+    <value>Momentálne nie sú vybraté žiadne bajty.</value>
+  </data>
+  <data xml:space="preserve" name="MoreBytes">
+    <value>
+… (ďalšie bajty: {0})</value>
+  </data>
+  <data xml:space="preserve" name="SelectionDetails">
+    <value>Počiatočná pozícia: 0x{0:X8} ({0})
+Dĺžka: {1} bajtov
+Úplné Data[]: {2} bajtov (bez obmedzenia)
+
+Hex náhľad:
+{3}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionTitle">
+    <value>Výber — HexViewer.Selection</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Zrušiť</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Zavrieť</value>
+  </data>
+  <data xml:space="preserve" name="Loading">
+    <value>Načítava sa {0}…</value>
+  </data>
+  <data xml:space="preserve" name="Error">
+    <value>Chyba: {0}</value>
+  </data>
+  <data xml:space="preserve" name="PickColour">
+    <value>Vybrať farbu</value>
+  </data>
+  <data xml:space="preserve" name="Searching">
+    <value>Hľadá sa…</value>
+  </data>
+  <data xml:space="preserve" name="InvalidHex">
+    <value>Neplatná hex hodnota: „{0}“</value>
+  </data>
+  <data xml:space="preserve" name="NotFound">
+    <value>Nenašlo sa.</value>
+  </data>
+  <data xml:space="preserve" name="MoreResults">
+    <value>… a ďalších {0}</value>
+  </data>
+  <data xml:space="preserve" name="Occurrences">
+    <value>Nájdené výskyty: {0}</value>
+  </data>
+  <data xml:space="preserve" name="FoundWrapped">
+    <value>Nájdené na 0x{0:X8} (cyklické hľadanie)</value>
+  </data>
+  <data xml:space="preserve" name="Found">
+    <value>Nájdené na 0x{0:X8}</value>
+  </data>
+  <data xml:space="preserve" name="SelectionStatus">
+    <value>Výber: 0x{0:X8}  dĺžka: {1}</value>
+  </data>
+  <data xml:space="preserve" name="HoverStatus">
+    <value>Pod kurzorom: {0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ColumnsStatus">
+    <value>Stĺpce: {0}</value>
+  </data>
+  <data xml:space="preserve" name="DefaultEncoding">
+    <value>{0} (predvolené)</value>
+  </data>
+</root>

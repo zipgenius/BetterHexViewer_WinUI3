@@ -13,7 +13,8 @@
 
     <!-- NuGet metadata -->
     <PackageId>BetterHexViewer.WinUI3</PackageId>
-    <Version>1.2.1</Version>
+    <Version>1.2.3</Version>
+    <NeutralLanguage>en</NeutralLanguage>
     <Authors>zipgenius.it</Authors>
     <Company>zipgenius.it</Company>
     <Product>BetterHexViewer WinUI 3</Product>
@@ -26,6 +27,8 @@
       (hex/dec/oct), column grouping, full-width auto-fit, customisable colours,
       ASCII encoding selection (IBM437, UTF-8, CP1252, …), hover cross-highlight,
       SelectionChanged events, and scroll support for files larger than 2 GB.
+      Localised UI in French, German, Russian, Arabic, Japanese, Swedish,
+      Spanish, Swahili, Simplified Chinese, and Slovak, with English fallback.
     </Description>
     <PackageTags>winui3;winui;hex;viewer;hexeditor;control;win2d;zipgenius</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -33,6 +36,7 @@
     <RepositoryUrl>https://github.com/zipgenius/BetterHexViewer_WinUI3</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>1.2.3: Localised control and demo resources in ten additional languages with English fallback. Updated GitHub and NuGet documentation.</PackageReleaseNotes>
     <PackageIcon>icon_128.png</PackageIcon>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
